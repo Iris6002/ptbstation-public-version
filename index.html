@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photobooth Station</title>
+    <link rel="stylesheet" href="assets/style/style.css">
+</head>
+
+<body>
+
+    <div class="app_layout">
+
+        <!-- =========================
+             HEADER / TITLE & TOOLS
+        ========================== -->
+        <header class="top_header">
+            <div class="brand_section">
+                <h1 class="title">Photobooth Station</h1>
+                <span class="subtitle">RETRO SNAP STUDIO</span>
+            </div>
+
+            <div class="header_tools">
+                <button type="button" class="tool_btn btn_morph" id="mirror_toggle_btn" title="Flip / Mirror Camera">
+                    <span class="btn_morph_text btn_label">Mirrored</span>
+                    <span class="btn_morph_icon">
+                        <svg class="morph_svg" viewBox="0 0 640 640"><path fill="currentColor" d="M96 96L96 544L544 544L544 96L96 96zM454.4 275.2L364.8 275.2L364.8 364.8L275.2 364.8L275.2 454.4L185.6 454.4L185.6 185.6L454.4 185.6L454.4 275.2z"/></svg>
+                    </span>
+                </button>
+
+                <button type="button" class="tool_btn btn_morph" id="camera_switch_btn" title="Switch Camera">
+                    <span class="btn_morph_text btn_label">Switch Cam</span>
+                    <span class="btn_morph_icon">
+                        <svg class="morph_svg" viewBox="0 0 640 640"><path fill="currentColor" d="M202.7 160L213.1 128.8C219.6 109.2 237.9 96 258.6 96L381.4 96C402.1 96 420.4 109.2 426.9 128.8L437.3 160L512 160C547.3 160 576 188.7 576 224L576 480C576 515.3 547.3 544 512 544L128 544C92.7 544 64 515.3 64 480L64 224C64 188.7 92.7 160 128 160L202.7 160zM160 369.9C160 373.8 161.4 377.6 164 380.5L212 434.5C218.4 441.7 229.6 441.7 235.9 434.5L283.9 380.5C286.5 377.6 287.9 373.8 287.9 369.9L287.9 368C287.9 359.2 280.7 352 271.9 352L247.9 352C247.9 312.2 280.1 280 319.9 280C324.3 280 328.6 280.4 332.8 281.2L367.7 241.9C353.1 235.5 336.9 232 319.9 232C253.6 232 199.9 285.7 199.9 352L175.9 352C167.1 352 159.9 359.2 159.9 368L159.9 369.9zM356 323.4C353.4 326.3 352 330.1 352 334L352 335.9C352 344.7 359.2 351.9 368 351.9L392 351.9C392 391.7 359.8 423.9 320 423.9C315.6 423.9 311.3 423.5 307.1 422.7L272.2 462C286.9 468.4 303 471.9 320 471.9C386.3 471.9 440 418.2 440 351.9L464 351.9C472.8 351.9 480 344.7 480 335.9L480 334C480 330.1 478.6 326.3 476 323.4L428 269.4C421.6 262.2 410.4 262.2 404.1 269.4L356.1 323.4z"/></svg>
+                    </span>
+                </button>
+            </div>
+        </header>
+
+
+        <!-- =========================
+             TOP CONTROLS ROW (MODE, TIMER, TIMESTAMP, THEME, STRIP FRAME)
+        ========================== -->
+        <div class="top_controls_row">
+            <div class="camera_control_bar">
+                <!-- Mode Toggle -->
+                <div class="control_group">
+                    <span class="control_label">MODE</span>
+                    <div class="segmented_control" id="mode_selector">
+                        <div class="segment_glider"></div>
+                        <button type="button" class="segment_btn active" data-mode="single">Single</button>
+                        <button type="button" class="segment_btn" data-mode="strip">4-Cut Strip</button>
+                    </div>
+                </div>
+
+                <!-- Timer Toggle -->
+                <div class="control_group">
+                    <span class="control_label">TIMER</span>
+                    <div class="segmented_control" id="timer_selector">
+                        <div class="segment_glider"></div>
+                        <button type="button" class="segment_btn" data-timer="0">Off</button>
+                        <button type="button" class="segment_btn active" data-timer="3">3s</button>
+                        <button type="button" class="segment_btn" data-timer="5">5s</button>
+                    </div>
+                </div>
+
+                <!-- Date Stamp Toggle -->
+                <div class="control_group">
+                    <span class="control_label">TIMESTAMP</span>
+                    <button type="button" class="stamp_toggle_btn active" id="stamp_toggle_btn" title="Toggle retro date stamp">
+                        <span class="icon_dump icon_timestamp"></span>
+                        <span class="stamp_indicator">ON</span>
+                        <span id="date_stamp_display">'26 09 18</span>
+                    </button>
+                </div>
+
+                <!-- Theme Palette Selector (4 Themes) -->
+                <div class="control_group theme_control_group" id="theme_control_group">
+                    <span class="control_label" id="theme_label">THEME</span>
+                    <div class="theme_swatches" id="theme_selector">
+                        <button type="button" class="theme_swatch_btn active" data-theme="mono" title="1. Classic Monochrome" style="--t-color-1: #121212; --t-color-2: #ffe600;"></button>
+                        <button type="button" class="theme_swatch_btn" data-theme="pastel" title="2. Pastel Dream" style="--t-color-1: #6C7EE1; --t-color-2: #FBA2D0;"></button>
+                        <button type="button" class="theme_swatch_btn" data-theme="sage" title="3. Sage & Matcha" style="--t-color-1: #5D7B6F; --t-color-2: #B0D4B8;"></button>
+                        <button type="button" class="theme_swatch_btn" data-theme="midnight" title="4. Midnight & Coral" style="--t-color-1: #001949; --t-color-2: #E17A8D;"></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Frame Color Picker (visible for Strip mode) -->
+            <div class="frame_color_bar" id="frame_color_bar">
+                <span class="control_label">STRIP FRAME COLOR</span>
+                <div class="color_swatches">
+                    <button type="button" class="swatch_btn active" data-color="#111111" title="Matte Black" style="--swatch-bg: #111111;"></button>
+                    <button type="button" class="swatch_btn" data-color="#ffffff" title="Crisp White" style="--swatch-bg: #ffffff;"></button>
+                    <button type="button" class="swatch_btn" data-color="#ffb3c1" title="Pastel Pink" style="--swatch-bg: #ffb3c1;"></button>
+                    <button type="button" class="swatch_btn" data-color="#c7f9cc" title="Mint Green" style="--swatch-bg: #c7f9cc;"></button>
+                    <button type="button" class="swatch_btn" data-color="#a0c4ff" title="Sky Blue" style="--swatch-bg: #a0c4ff;"></button>
+                    <button type="button" class="swatch_btn" data-color="#fdffb6" title="Butter Yellow" style="--swatch-bg: #fdffb6;"></button>
+                    <button type="button" class="swatch_btn" data-color="#bdb2ff" title="Lilac Purple" style="--swatch-bg: #bdb2ff;"></button>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- =========================
+             COLUMN 1: HISTORY PANEL
+        ========================== -->
+        <aside class="history_panel">
+            <div class="panel_header">
+                <h2>History</h2>
+                <button type="button" class="clear_history_btn btn_morph" id="clear_history_btn" title="Clear all history">
+                    <span class="btn_morph_text">Clear</span>
+                    <span class="btn_morph_icon">
+                        <svg class="morph_svg" viewBox="0 0 640 640"><path fill="currentColor" d="M232.7 69.9L224 96L128 96C110.3 96 96 110.3 96 128C96 145.7 110.3 160 128 160L512 160C529.7 160 544 145.7 544 128C544 110.3 529.7 96 512 96L416 96L407.3 69.9C402.9 56.8 390.7 48 376.9 48L263.1 48C249.3 48 237.1 56.8 232.7 69.9zM512 208L128 208L149.1 531.1C150.7 556.4 171.7 576 197 576L443 576C468.3 576 489.3 556.4 490.9 531.1L512 208z"/></svg>
+                    </span>
+                </button>
+            </div>
+
+            <div class="history_list" id="history_list">
+                <div class="history_empty" id="history_empty">
+                    <span class="icon_dump icon_empty_history"></span>
+                    <p>No photos yet.<br>Click <strong>TAKE!</strong> to begin</p>
+                </div>
+            </div>
+        </aside>
+
+
+        <!-- =========================
+             COLUMN 2: CAMERA VIEWPORT (PURE 16:9)
+        ========================== -->
+        <main class="camera_wrapper">
+            <div class="video_frame">
+                <video
+                    class="camera_stream"
+                    autoplay
+                    playsinline>
+                </video>
+
+                <div class="layout_fakeflash"></div>
+
+                <!-- Countdown Overlay -->
+                <div class="countdown_overlay" id="countdown_overlay" style="display: none;">
+                    <div class="countdown_box">
+                        <span class="countdown_number" id="countdown_number">3</span>
+                        <span class="countdown_subtitle" id="countdown_subtitle">GET READY!</span>
+                    </div>
+                </div>
+
+                <!-- Shot Progress Bar (for 4-cut strip) -->
+                <div class="strip_progress_bar" id="strip_progress_bar" style="display: none;">
+                    <span id="strip_progress_text">Photo 1 of 4</span>
+                    <div class="progress_dots">
+                        <span class="dot active"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hidden canvas used for taking photos -->
+            <canvas class="photo_canvas" style="display: none;"></canvas>
+        </main>
+
+
+        <!-- =========================
+             COLUMN 3: FILTERS PANEL
+        ========================== -->
+        <aside class="filters_panel">
+            <div class="panel_header">
+                <h2>Filters</h2>
+            </div>
+
+            <div class="filters_list">
+                <button type="button" id="filter_none" class="filter_item active" data-caman="none" data-filter="none">
+                    <span class="filter_preview_circle preview_normal"></span>
+                    <span class="filter_name">Normal</span>
+                </button>
+
+                <button type="button" id="filter_vintage" class="filter_item" data-caman="vintage" data-filter="sepia(0.35) contrast(1.15) brightness(1.05) saturate(1.2)">
+                    <span class="filter_preview_circle preview_vintage"></span>
+                    <span class="filter_name">Vintage</span>
+                </button>
+
+                <button type="button" id="filter_lomo" class="filter_item" data-caman="lomo" data-filter="contrast(1.35) saturate(1.3) brightness(0.95)">
+                    <span class="filter_preview_circle preview_lomo"></span>
+                    <span class="filter_name">Lomo</span>
+                </button>
+
+                <button type="button" id="filter_clarity" class="filter_item" data-caman="clarity" data-filter="contrast(1.3) brightness(1.05) saturate(1.1)">
+                    <span class="filter_preview_circle preview_clarity"></span>
+                    <span class="filter_name">Clarity</span>
+                </button>
+
+                <button type="button" id="filter_sincity" class="filter_item" data-caman="sinCity" data-filter="grayscale(1) contrast(1.4) brightness(1.1)">
+                    <span class="filter_preview_circle preview_sinCity"></span>
+                    <span class="filter_name">Sin City</span>
+                </button>
+
+                <button type="button" id="filter_crossprocess" class="filter_item" data-caman="crossProcess" data-filter="contrast(1.25) saturate(1.35) hue-rotate(-15deg)">
+                    <span class="filter_preview_circle preview_crossProcess"></span>
+                    <span class="filter_name">Cross Process</span>
+                </button>
+
+                <button type="button" id="filter_sunrise" class="filter_item" data-caman="sunrise" data-filter="sepia(0.25) saturate(1.45) hue-rotate(15deg) brightness(1.08)">
+                    <span class="filter_preview_circle preview_sunrise"></span>
+                    <span class="filter_name">Sunrise</span>
+                </button>
+
+                <button type="button" id="filter_hermajesty" class="filter_item" data-caman="herMajesty" data-filter="contrast(1.15) saturate(1.3) hue-rotate(-20deg) brightness(1.1)">
+                    <span class="filter_preview_circle preview_herMajesty"></span>
+                    <span class="filter_name">Her Majesty</span>
+                </button>
+
+                <button type="button" id="filter_nostalgia" class="filter_item" data-caman="nostalgia" data-filter="sepia(0.4) saturate(0.85) contrast(1.1) brightness(0.95)">
+                    <span class="filter_preview_circle preview_nostalgia"></span>
+                    <span class="filter_name">Nostalgia</span>
+                </button>
+
+                <button type="button" id="filter_pinhole" class="filter_item" data-caman="pinhole" data-filter="contrast(1.45) brightness(0.85) saturate(0.8)">
+                    <span class="filter_preview_circle preview_pinhole"></span>
+                    <span class="filter_name">Pinhole</span>
+                </button>
+            </div>
+        </aside>
+
+
+        <!-- =========================
+             BOTTOM ROW: TAKE PHOTO BUTTON (BELOW ALL 3 COLUMNS)
+        ========================== -->
+        <div class="takephoto_container">
+            <button type="button" class="takephoto_btn btn_morph" id="take_photo_btn">
+                <span class="btn_morph_text btn_text">TAKE!</span>
+                <span class="btn_morph_icon">
+                    <svg class="morph_svg" viewBox="0 0 640 640"><path fill="currentColor" d="M64 480L64 272L200.2 272C213.7 251.8 232.2 235.2 253.9 224L64 224L64 189.7C64 154.4 92.7 125.7 128 125.7L128.1 125.7C129.3 109.1 143.1 96 160 96L192 96C208.9 96 222.7 109.1 223.9 125.7L256 125.7L307.2 101.9C315.6 98 324.8 95.9 334.1 95.9L512 96C547.3 96 576 124.7 576 160L576 224L386 224C407.7 235.2 426.2 251.8 439.7 272L575.9 272L575.9 480C575.9 515.3 547.2 544 511.9 544L128 544C92.7 544 64 515.3 64 480zM320 256C284.9 254.9 252.1 272.9 234.2 303.1C216.3 333.3 216.3 370.8 234.2 401C252.1 431.2 284.9 449.2 320 448.1C355.1 449.2 387.9 431.2 405.8 401C423.7 370.8 423.7 333.3 405.8 303.1C387.9 272.9 355.1 254.9 320 256z"/></svg>
+                </span>
+            </button>
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         PHOTO RESULT OVERLAY MODAL
+    ========================== -->
+    <div class="result_overlay" style="display: none;" id="result_overlay">
+        <div class="result_box">
+
+            <div class="modal_top_bar">
+                <span class="result_title">Captured Photo</span>
+                <button type="button" class="close_btn" id="close_result_btn" title="Close">×</button>
+            </div>
+
+            <div class="result_image_container">
+                <img class="photo_result" id="photo_result" alt="Your captured photo">
+            </div>
+
+            <!-- Action Buttons Bar -->
+            <div class="result_action_bar">
+                <button type="button" class="action_btn primary_action btn_morph" id="download_btn" title="Download High-Res PNG">
+                    <span class="btn_morph_text">Download PNG</span>
+                    <span class="btn_morph_icon">
+                        <svg class="morph_svg" viewBox="0 0 640 640"><path fill="currentColor" d="M352 96C352 78.3 337.7 64 320 64C302.3 64 288 78.3 288 96L288 306.7L246.6 265.3C234.1 252.8 213.8 252.8 201.3 265.3C188.8 277.8 188.8 298.1 201.3 310.6L297.3 406.6C309.8 419.1 330.1 419.1 342.6 406.6L438.6 310.6C451.1 298.1 451.1 277.8 438.6 265.3C426.1 252.8 405.8 252.8 393.3 265.3L352 306.7L352 96zM160 384C124.7 384 96 412.7 96 448L96 480C96 515.3 124.7 544 160 544L480 544C515.3 544 544 515.3 544 480L544 448C544 412.7 515.3 384 480 384L433.1 384L376.5 440.6C345.3 471.8 294.6 471.8 263.4 440.6L206.9 384L160 384zM464 440C477.3 440 488 450.7 488 464C488 477.3 477.3 488 464 488C450.7 488 440 477.3 440 464C440 450.7 450.7 440 464 440z"/></svg>
+                    </span>
+                </button>
+
+                <button type="button" class="action_btn btn_morph" id="print_btn" title="Print this photo">
+                    <span class="btn_morph_text">Print</span>
+                    <span class="btn_morph_icon">
+                        <svg class="morph_svg" viewBox="0 0 640 640"><path fill="currentColor" d="M128 128C128 92.7 156.7 64 192 64L405.5 64C422.5 64 438.8 70.7 450.8 82.7L493.3 125.2C505.3 137.2 512 153.5 512 170.5L512 208L128 208L128 128zM64 320C64 284.7 92.7 256 128 256L512 256C547.3 256 576 284.7 576 320L576 416C576 433.7 561.7 448 544 448L512 448L512 512C512 547.3 483.3 576 448 576L192 576C156.7 576 128 547.3 128 512L128 448L96 448C78.3 448 64 433.7 64 416L64 320zM192 480L192 512L448 512L448 416L192 416L192 480zM520 336C520 322.7 509.3 312 496 312C482.7 312 472 322.7 472 336C472 349.3 482.7 360 496 360C509.3 360 520 349.3 520 336z"/></svg>
+                    </span>
+                </button>
+
+                <button type="button" class="action_btn btn_morph" id="copy_btn" title="Copy to clipboard">
+                    <span class="btn_morph_text">Copy</span>
+                    <span class="btn_morph_icon">
+                        <svg class="morph_svg" viewBox="0 0 640 640"><path fill="currentColor" d="M288 64C252.7 64 224 92.7 224 128L224 384C224 419.3 252.7 448 288 448L480 448C515.3 448 544 419.3 544 384L544 183.4C544 166 536.9 149.3 524.3 137.2L466.6 81.8C454.7 70.4 438.8 64 422.3 64L288 64zM160 192C124.7 192 96 220.7 96 256L96 512C96 547.3 124.7 576 160 576L352 576C387.3 576 416 547.3 416 512L416 496L352 496L352 512L160 512L160 256L176 256L176 192L160 192z"/></svg>
+                    </span>
+                </button>
+
+                <button type="button" class="action_btn btn_morph" id="send_modal_open_btn" title="Send via email">
+                    <span class="btn_morph_text">Email</span>
+                    <span class="btn_morph_icon">
+                        <svg class="morph_svg" viewBox="0 0 640 640"><path fill="currentColor" d="M112 128C85.5 128 64 149.5 64 176C64 191.1 71.1 205.3 83.2 214.4L291.2 370.4C308.3 383.2 331.7 383.2 348.8 370.4L556.8 214.4C568.9 205.3 576 191.1 576 176C576 149.5 554.5 128 528 128L112 128zM64 260L64 448C64 483.3 92.7 512 128 512L512 512C547.3 512 576 483.3 576 448L576 260L377.6 408.8C343.5 434.4 296.5 434.4 262.4 408.8L64 260z"/></svg>
+                    </span>
+                </button>
+
+                <button type="button" class="action_btn retake_action btn_morph" id="retake_btn" title="Retake photo">
+                    <span class="btn_morph_text">Retake</span>
+                    <span class="btn_morph_icon">
+                        <svg class="morph_svg" viewBox="0 0 640 640"><path fill="currentColor" d="M73.4 297.4C60.9 309.9 60.9 330.2 73.4 342.7L233.4 502.7C245.9 515.2 266.2 515.2 278.7 502.7C291.2 490.2 291.2 469.9 278.7 457.4L173.3 352L544 352C561.7 352 576 337.7 576 320C576 302.3 561.7 288 544 288L173.3 288L278.7 182.6C291.2 170.1 291.2 149.8 278.7 137.3C266.2 124.8 245.9 124.8 233.4 137.3L73.4 297.3z"/></svg>
+                    </span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- =========================
+         EMAIL MODAL
+    ========================== -->
+    <div class="email_overlay" style="display: none;" id="email_overlay">
+        <div class="email_modal">
+            <h2>Send Photo</h2>
+            <p>Enter your email address to receive this photo:</p>
+
+            <input
+                type="email"
+                class="email_input"
+                id="email_input"
+                placeholder="name@example.com"
+                autocomplete="email">
+
+            <div class="email_actions">
+                <button type="button" class="email_cancel_btn" id="email_cancel_btn">Cancel</button>
+                <button type="button" class="email_send_btn" id="email_send_btn">Send Photo</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- =========================
+         PRINT AREA
+    ========================== -->
+    <div id="print_container" class="print_only_container">
+        <img id="print_image" alt="Print photo">
+    </div>
+
+
+    <script src="assets/js/caman.full.min.js"></script>
+    <script src="assets/js/app.js"></script>
+
+</body>
+
+</html>
