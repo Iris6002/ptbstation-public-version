@@ -517,6 +517,18 @@ body[data-theme="midnight"] {
     margin-right: 4px;
 }
 
+.theme_swatches .theme_swatch_btn.active:first-child.active {
+    margin-right: 8px;
+}
+
+.theme_swatches .theme_swatch_btn.active:not(:first-child):not(:last-child) {
+    margin: 0 8px;
+}
+
+.theme_swatches .theme_swatch_btn.active:last-child {
+    margin-left: 8px;
+}
+
 .theme_swatches {
     display: flex;
     align-items: center;
@@ -531,7 +543,10 @@ body[data-theme="midnight"] {
     background: linear-gradient(135deg, var(--t-color-1) 50%, var(--t-color-2) 50%);
     cursor: pointer;
     box-shadow: 2px 2px 0 var(--black);
-    transition: transform 0.12s ease;
+    transition: transform 0.12s ease,
+                margin-right 0.12s ease,
+                margin 0.12s ease,
+                margin-left 0.12s ease;
 }
 
 .theme_swatch_btn:hover {
