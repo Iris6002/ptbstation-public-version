@@ -18,6 +18,8 @@ const state = {
     currentResultDataUrl: null
 };
 
+window.state = state;
+
 
 // =========================================================
 // CAMERA INITIALIZATION & MANAGEMENT
@@ -117,9 +119,16 @@ mirrorToggleBtn.addEventListener('click', () => {
         label.textContent = 'Normal View';
         mirrorToggleBtn.classList.add('active');
     }
+
+    if (window.Creature && window.Creature.onMirrorToggle) {
+        window.Creature.onMirrorToggle(state.isMirrored);
+    }
 });
 
 cameraSwitchBtn.addEventListener('click', async () => {
+    if (window.Creature && window.Creature.onCameraSwitch) {
+        window.Creature.onCameraSwitch();
+    }
     if (state.videoDevices.length > 1) {
         state.currentDeviceIndex = (state.currentDeviceIndex + 1) % state.videoDevices.length;
         const nextDevice = state.videoDevices[state.currentDeviceIndex];
@@ -237,6 +246,9 @@ timerButtons.forEach(btn => {
         btn.classList.add('active');
         state.timer = parseInt(btn.dataset.timer, 10);
         updateSegmentGlider(btn.closest('.segmented_control'));
+        if (window.Creature && window.Creature.setTimerActive) {
+            window.Creature.setTimerActive(state.timer > 0);
+        }
     });
 });
 
@@ -265,7 +277,7 @@ swatchButtons.forEach(swatch => {
 // Theme palette selector (4 color palettes)
 const themeButtons = document.querySelectorAll('#theme_selector .theme_swatch_btn');
 
-function applyTheme(themeName) {
+function applyTheme(themeName, isInitial = false) {
     document.body.dataset.theme = themeName;
     themeButtons.forEach(btn => {
         if (btn.dataset.theme === themeName) {
@@ -288,18 +300,22 @@ function applyTheme(themeName) {
     } catch (e) {
         console.warn('Could not save theme to localStorage:', e);
     }
+
+    if (!isInitial && window.Creature && window.Creature.onThemeChange) {
+        window.Creature.onThemeChange(themeName);
+    }
 }
 
 themeButtons.forEach(btn => {
     btn.addEventListener('click', () => {
         const theme = btn.dataset.theme;
-        applyTheme(theme);
+        applyTheme(theme, false);
     });
 });
 
 // Load saved theme on startup
 const savedTheme = localStorage.getItem('ptb_theme') || 'mono';
-applyTheme(savedTheme);
+applyTheme(savedTheme, true);
 
 // Initialize gliders on start and window resize
 function initAllGliders() {
@@ -307,8 +323,13 @@ function initAllGliders() {
 }
 
 window.addEventListener('resize', initAllGliders);
+window.addEventListener('load', initAllGliders);
+if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(initAllGliders);
+}
 requestAnimationFrame(initAllGliders);
-setTimeout(initAllGliders, 100);
+setTimeout(initAllGliders, 50);
+setTimeout(initAllGliders, 150);
 
 
 // =========================================================
@@ -324,6 +345,9 @@ filterButtons.forEach(btn => {
         state.currentFilter = btn.dataset.filter || 'none';
         state.currentCamanPreset = btn.dataset.caman || 'none';
         videoElement.style.filter = state.currentFilter;
+        if (window.Creature && window.Creature.onFilterChange) {
+            window.Creature.onFilterChange(state.currentCamanPreset, state.currentFilter);
+        }
     });
 });
 
@@ -341,6 +365,9 @@ function triggerFlash() {
     fakeFlash.classList.remove('flash_trigger');
     void fakeFlash.offsetWidth; // force reflow
     fakeFlash.classList.add('flash_trigger');
+    if (window.Creature && window.Creature.onFlash) {
+        window.Creature.onFlash();
+    }
 }
 
 function runCountdown(seconds, subtitleText = 'GET READY!') {
@@ -355,11 +382,17 @@ function runCountdown(seconds, subtitleText = 'GET READY!') {
 
         let remaining = seconds;
         countdownNumber.textContent = remaining;
+        if (window.Creature && window.Creature.onCountdown) {
+            window.Creature.onCountdown(remaining);
+        }
 
         const timerInterval = setInterval(() => {
             remaining--;
             if (remaining > 0) {
                 countdownNumber.textContent = remaining;
+                if (window.Creature && window.Creature.onCountdown) {
+                    window.Creature.onCountdown(remaining);
+                }
             } else {
                 clearInterval(timerInterval);
                 countdownOverlay.style.display = 'none';
@@ -593,6 +626,10 @@ captureBtn.addEventListener('click', async () => {
     state.isCapturing = true;
     captureBtn.disabled = true;
 
+    if (window.Creature && window.Creature.onTakeInitiated) {
+        window.Creature.onTakeInitiated();
+    }
+
     try {
         if (state.mode === 'single') {
             // Single shot flow
@@ -601,6 +638,12 @@ captureBtn.addEventListener('click', async () => {
 
             const raw = await captureRawFrame();
             const finalImg = renderSinglePhoto(raw);
+
+            // Creature swallows / eats the photo playfully before showing results
+            if (window.Creature && window.Creature.eatPhoto) {
+                await window.Creature.eatPhoto(finalImg);
+            }
+
             showResult(finalImg);
 
         } else {
@@ -635,6 +678,12 @@ captureBtn.addEventListener('click', async () => {
 
             // Stitch frames into vertical strip
             const finalImg = renderPhotoStrip(capturedFrames);
+
+            // Creature swallows / eats the completed strip playfully
+            if (window.Creature && window.Creature.eatPhoto) {
+                await window.Creature.eatPhoto(finalImg);
+            }
+
             showResult(finalImg);
         }
 
@@ -643,6 +692,9 @@ captureBtn.addEventListener('click', async () => {
     } finally {
         state.isCapturing = false;
         captureBtn.disabled = false;
+        if (window.Creature && window.Creature.shell) {
+            window.Creature.shell.classList.remove('portal_capturing', 'take_anticipation', 'creature_excited');
+        }
     }
 });
 
@@ -657,6 +709,11 @@ function showResult(imgURL) {
 
     // Add to history and persist
     addToHistory(imgURL);
+
+    // Creature notices the new photo appearing in History
+    if (window.Creature && window.Creature.onPhotoAppearedInHistory) {
+        window.Creature.onPhotoAppearedInHistory();
+    }
 
     // Reveal overlay
     setTimeout(() => {
@@ -792,8 +849,9 @@ function saveStoredHistory(items) {
 
 function addToHistory(imgURL) {
     const history = getStoredHistory();
+    const newId = Date.now().toString();
     history.unshift({
-        id: Date.now().toString(),
+        id: newId,
         dataUrl: imgURL,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     });
@@ -804,7 +862,7 @@ function addToHistory(imgURL) {
     }
 
     saveStoredHistory(history);
-    renderHistory();
+    renderHistory(newId);
 }
 
 function deleteHistoryItem(id, e) {
@@ -823,7 +881,7 @@ function clearAllHistory() {
 
 clearHistoryBtn.addEventListener('click', clearAllHistory);
 
-function renderHistory() {
+function renderHistory(newestId) {
     const history = getStoredHistory();
 
     // Clear existing thumbnails
@@ -843,6 +901,12 @@ function renderHistory() {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.classList.add('history_item');
+        if (newestId && item.id === newestId) {
+            btn.classList.add('memory_new_pulse');
+            setTimeout(() => {
+                btn.classList.remove('memory_new_pulse');
+            }, 1800);
+        }
         btn.title = `Click to view captured photo (${item.timestamp})`;
 
         const img = document.createElement('img');
@@ -863,6 +927,18 @@ function renderHistory() {
         btn.appendChild(delBtn);
         btn.appendChild(badge);
 
+        btn.addEventListener('mouseenter', () => {
+            if (window.Creature && window.Creature.onMemoryHover) {
+                window.Creature.onMemoryHover();
+            }
+        });
+
+        btn.addEventListener('mouseleave', () => {
+            if (window.Creature && window.Creature.onMemoryLeave) {
+                window.Creature.onMemoryLeave();
+            }
+        });
+
         btn.addEventListener('click', () => {
             state.currentResultDataUrl = item.dataUrl;
             photoResult.src = item.dataUrl;
@@ -875,3 +951,4 @@ function renderHistory() {
 
 // Render saved history on load
 renderHistory();
+
