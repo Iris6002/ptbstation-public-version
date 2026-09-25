@@ -18,7 +18,8 @@
         <header class="top_header">
             <div class="brand_section">
                 <h1 class="title">Photobooth Station</h1>
-                <span class="subtitle">RETRO SNAP STUDIO</span>
+                <!-- <span class="subtitle">Vy's Lover</span> -->
+                <span class="subtitle">RETRO SNAP STUDIO</span> <!--  public version -->
             </div>
 
             <div class="header_tools">
@@ -108,8 +109,8 @@
         ========================== -->
         <aside class="history_panel">
             <div class="panel_header">
-                <h2>History</h2>
-                <button type="button" class="clear_history_btn btn_morph" id="clear_history_btn" title="Clear all history">
+                <h2>Memories</h2>
+                <button type="button" class="clear_history_btn btn_morph" id="clear_history_btn" title="Clear all memories">
                     <span class="btn_morph_text">Clear</span>
                     <span class="btn_morph_icon">
                         <svg class="morph_svg" viewBox="0 0 640 640"><path fill="currentColor" d="M232.7 69.9L224 96L128 96C110.3 96 96 110.3 96 128C96 145.7 110.3 160 128 160L512 160C529.7 160 544 145.7 544 128C544 110.3 529.7 96 512 96L416 96L407.3 69.9C402.9 56.8 390.7 48 376.9 48L263.1 48C249.3 48 237.1 56.8 232.7 69.9zM512 208L128 208L149.1 531.1C150.7 556.4 171.7 576 197 576L443 576C468.3 576 489.3 556.4 490.9 531.1L512 208z"/></svg>
@@ -120,7 +121,7 @@
             <div class="history_list" id="history_list">
                 <div class="history_empty" id="history_empty">
                     <span class="icon_dump icon_empty_history"></span>
-                    <p>No photos yet.<br>Click <strong>TAKE!</strong> to begin</p>
+                    <p>No memories yet.<br>Click <strong>TAKE!</strong> to capture</p>
                 </div>
             </div>
         </aside>
@@ -130,33 +131,107 @@
              COLUMN 2: CAMERA VIEWPORT (PURE 16:9)
         ========================== -->
         <main class="camera_wrapper">
-            <div class="video_frame">
-                <video
-                    class="camera_stream"
-                    autoplay
-                    playsinline>
-                </video>
+            <!-- Living Camera Creature Shell -->
+            <div class="creature_shell" id="camera_creature">
 
-                <div class="layout_fakeflash"></div>
+                <!-- Creature Ears -->
+                <div class="creature_ear ear_left">
+                    <div class="ear_inner"></div>
+                </div>
+                <div class="creature_ear ear_right">
+                    <div class="ear_inner"></div>
+                </div>
 
-                <!-- Countdown Overlay -->
-                <div class="countdown_overlay" id="countdown_overlay" style="display: none;">
-                    <div class="countdown_box">
-                        <span class="countdown_number" id="countdown_number">3</span>
-                        <span class="countdown_subtitle" id="countdown_subtitle">GET READY!</span>
+                <!-- Creature Head & Face -->
+                <div class="creature_head">
+                    <!-- Handmade Toy X-Stitch Patch -->
+                    <span class="creature_patch" title="Handmade craft stitch">+</span>
+
+                    <!-- Left Eye (Asymmetric: curious, slightly larger) -->
+                    <div class="creature_eye eye_left">
+                        <div class="creature_pupil">
+                            <div class="pupil_shine"></div>
+                        </div>
+                    </div>
+
+                    <!-- Center Snout & Mouth -->
+                    <div class="creature_face_center">
+                        <div class="creature_mouth" id="creature_mouth">
+                            <div class="mouth_inner"></div>
+                        </div>
+                        <div class="creature_zzz_container" id="creature_zzz_container"></div>
+                    </div>
+
+                    <!-- Right Eye (Asymmetric: playful, arched) -->
+                    <div class="creature_eye eye_right">
+                        <div class="creature_pupil">
+                            <div class="pupil_shine"></div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Shot Progress Bar (for 4-cut strip) -->
-                <div class="strip_progress_bar" id="strip_progress_bar" style="display: none;">
-                    <span id="strip_progress_text">Photo 1 of 4</span>
-                    <div class="progress_dots">
-                        <span class="dot active"></span>
-                        <span class="dot"></span>
-                        <span class="dot"></span>
-                        <span class="dot"></span>
+                <!-- Creature Belly Section (Arms hugging the Portal) -->
+                <div class="creature_belly_section">
+                    <!-- Left Arm / Hugging Paw -->
+                    <div class="creature_arm arm_left">
+                        <div class="creature_paw">
+                            <span class="claw"></span>
+                            <span class="claw"></span>
+                            <span class="claw"></span>
+                        </div>
+                    </div>
+
+                    <!-- Creature Belly Portal (Live Webcam Viewport) -->
+                    <div class="video_frame" id="camera_portal">
+                        <!-- Portal Viewfinder Corner Brackets -->
+                        <div class="portal_bracket bracket_tl"></div>
+                        <div class="portal_bracket bracket_tr"></div>
+                        <div class="portal_bracket bracket_bl"></div>
+                        <div class="portal_bracket bracket_br"></div>
+
+                        <video
+                            class="camera_stream"
+                            autoplay
+                            playsinline>
+                        </video>
+
+                        <div class="layout_fakeflash"></div>
+
+                        <!-- Countdown Overlay -->
+                        <div class="countdown_overlay" id="countdown_overlay" style="display: none;">
+                            <div class="countdown_box">
+                                <span class="countdown_number" id="countdown_number">3</span>
+                                <span class="countdown_subtitle" id="countdown_subtitle">GET READY!</span>
+                            </div>
+                        </div>
+
+                        <!-- Shot Progress Bar (for 4-cut strip) -->
+                        <div class="strip_progress_bar" id="strip_progress_bar" style="display: none;">
+                            <span id="strip_progress_text">Photo 1 of 4</span>
+                            <div class="progress_dots">
+                                <span class="dot active"></span>
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                            </div>
+                        </div>
+
+                        <!-- Flying Photo Swallow Effect -->
+                        <div class="flying_photo_swallow" id="flying_photo_swallow"></div>
+                    </div>
+
+                    <!-- Right Arm / Hugging Paw -->
+                    <div class="creature_arm arm_right">
+                        <div class="creature_paw">
+                            <span class="claw"></span>
+                            <span class="claw"></span>
+                            <span class="claw"></span>
+                        </div>
                     </div>
                 </div>
+
+
+
             </div>
 
             <!-- Hidden canvas used for taking photos -->
@@ -330,6 +405,7 @@
 
 
     <script src="assets/js/caman.full.min.js"></script>
+    <script src="assets/js/creature.js"></script>
     <script src="assets/js/app.js"></script>
 
 </body>
