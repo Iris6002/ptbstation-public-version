@@ -558,6 +558,10 @@ const PTBExperiences = {
             canvas.height = rect.height;
         };
         window.addEventListener('resize', resize);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(resize, 100);
+            setTimeout(resize, 350);
+        });
         setTimeout(resize, 300);
 
         // Light Palette & Tool Bar
