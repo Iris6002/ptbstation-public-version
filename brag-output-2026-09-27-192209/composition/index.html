@@ -1,0 +1,1887 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1920, height=1080" />
+  <title>Photobooth Station — Launch Brag</title>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #eceee9;
+      --bg-pastel: #edf3fc;
+      --panel-bg: #ffffff;
+      --ink: #121212;
+      --yellow: #ffe600;
+      --yellow-hover: #ffd000;
+      --pastel-blue: #6C7EE1;
+      --pastel-pink: #FBA2D0;
+      --coral: #E17A8D;
+      --red: #e74c3c;
+      --gray-1: #f7f7f8;
+      --gray-2: #eaecef;
+      --gray-5: #4b5563;
+      --border-thick: 4px solid var(--ink);
+      --border-thin: 2.5px solid var(--ink);
+      --shadow-base: 6px 6px 0 var(--ink);
+      --shadow-lg: 8px 8px 0 var(--ink);
+      --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    html, body {
+      margin: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: var(--bg);
+      font-family: var(--font-display);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #root {
+      width: 1920px;
+      height: 1080px;
+      position: relative;
+      overflow: hidden;
+      background-color: var(--bg);
+      transition: background-color 0.4s ease;
+    }
+
+    audio { display: none; }
+
+    /* BOOTH APP CONTAINER */
+    .app_container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1920px;
+      height: 1080px;
+      padding: 32px 56px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      z-index: 10;
+      transform-origin: 50% 50%;
+    }
+
+    /* TOP HEADER */
+    .top_header {
+      width: 100%;
+      height: 68px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--panel-bg);
+      border: var(--border-thick);
+      border-radius: 18px;
+      box-shadow: var(--shadow-base);
+      padding: 0 32px;
+    }
+
+    .brand_section {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+    }
+
+    .brand_title {
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      color: var(--ink);
+    }
+
+    .brand_subtitle {
+      font-size: 14px;
+      font-weight: 900;
+      background: var(--yellow);
+      color: var(--ink);
+      padding: 4px 10px;
+      border: var(--border-thin);
+      border-radius: 6px;
+      box-shadow: 2px 2px 0 var(--ink);
+      letter-spacing: 0.5px;
+    }
+
+    .header_tools {
+      display: flex;
+      gap: 14px;
+    }
+
+    .tool_btn {
+      padding: 8px 18px;
+      background: var(--gray-1);
+      border: var(--border-thin);
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 800;
+      box-shadow: 3px 3px 0 var(--ink);
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* TOP CONTROLS ROW */
+    .controls_row {
+      width: 100%;
+      height: 62px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--panel-bg);
+      border: var(--border-thick);
+      border-radius: 16px;
+      box-shadow: var(--shadow-base);
+      padding: 0 28px;
+    }
+
+    .ctrl_group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ctrl_label {
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--ink);
+      letter-spacing: 0.5px;
+    }
+
+    .segmented {
+      display: flex;
+      background: var(--gray-2);
+      border: var(--border-thin);
+      border-radius: 10px;
+      padding: 3px;
+      gap: 4px;
+      position: relative;
+    }
+
+    .seg_btn {
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 800;
+      border: none;
+      background: transparent;
+      border-radius: 6px;
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    .seg_btn.active {
+      background: var(--ink);
+      color: #ffffff;
+      box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+    }
+
+    .stamp_tag {
+      background: var(--ink);
+      color: var(--yellow);
+      font-weight: 900;
+      font-size: 13px;
+      padding: 6px 14px;
+      border: var(--border-thin);
+      border-radius: 8px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .theme_swatches {
+      display: flex;
+      gap: 10px;
+    }
+
+    .swatch {
+      width: 28px;
+      height: 28px;
+      border: var(--border-thin);
+      border-radius: 8px;
+      box-shadow: 2px 2px 0 var(--ink);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .swatch.mono { background: linear-gradient(135deg, #121212 50%, #ffe600 50%); }
+    .swatch.pastel { background: linear-gradient(135deg, #6C7EE1 50%, #FBA2D0 50%); }
+    .swatch.active::after {
+      content: "";
+      position: absolute;
+      inset: -4px;
+      border: 2px solid var(--ink);
+      border-radius: 11px;
+    }
+
+    /* MAIN 3-COLUMN LAYOUT */
+    .main_grid {
+      width: 100%;
+      flex: 1;
+      display: grid;
+      grid-template-columns: 280px 1fr 280px;
+      gap: 28px;
+      min-height: 0;
+    }
+
+    /* LEFT: MEMORIES PANEL */
+    .memories_panel {
+      background: var(--panel-bg);
+      border: var(--border-thick);
+      border-radius: 20px;
+      box-shadow: var(--shadow-base);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+    }
+
+    .panel_title_bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2.5px solid var(--gray-2);
+      padding-bottom: 12px;
+    }
+
+    .panel_title {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--ink);
+    }
+
+    .clear_btn {
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 900;
+      background: var(--gray-1);
+      border: 2px solid var(--ink);
+      border-radius: 6px;
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .memories_scroll {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow: hidden;
+      padding-right: 4px;
+    }
+
+    .memory_thumb {
+      width: 100%;
+      height: 180px;
+      background: var(--gray-2);
+      border: 3px solid var(--ink);
+      border-radius: 12px;
+      box-shadow: 4px 4px 0 var(--ink);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 6px;
+      gap: 4px;
+    }
+
+    .memory_strip_slot {
+      flex: 1;
+      background: #333;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .memory_new_pulse {
+      box-shadow: 0 0 0 4px var(--yellow), 6px 6px 0 var(--ink) !important;
+      transform: scale(1.03);
+      transition: all 0.3s cubic-bezier(0.34, 1.5, 0.64, 1);
+    }
+
+    /* CENTER: CREATURE & CAMERA VIEWPORT */
+    .creature_container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      justify-content: center;
+    }
+
+    .creature_shell {
+      width: 100%;
+      height: 100%;
+      max-height: 610px;
+      background: var(--panel-bg);
+      border: var(--border-thick);
+      border-radius: 28px;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      padding: 16px 28px 24px;
+    }
+
+    /* CREATURE EARS */
+    .creature_ear {
+      position: absolute;
+      top: -26px;
+      width: 54px;
+      height: 38px;
+      background: var(--panel-bg);
+      border: var(--border-thick);
+      border-bottom: none;
+      z-index: 5;
+      transform-origin: bottom center;
+      transition: transform 0.2s ease;
+    }
+
+    .ear_left {
+      left: 140px;
+      border-radius: 26px 26px 4px 4px;
+      transform: rotate(-14deg);
+    }
+
+    .ear_right {
+      right: 140px;
+      border-radius: 26px 26px 4px 4px;
+      transform: rotate(14deg);
+    }
+
+    .ear_inner {
+      width: 22px;
+      height: 16px;
+      background: var(--ink);
+      opacity: 0.15;
+      border-radius: 12px 12px 2px 2px;
+      margin: 6px auto 0;
+    }
+
+    /* WINDUP KEY */
+    .windup_key {
+      position: absolute;
+      top: -38px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 44px;
+      height: 28px;
+      border: var(--border-thin);
+      border-radius: 14px;
+      background: var(--yellow);
+      box-shadow: 2px 2px 0 var(--ink);
+      z-index: 4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .windup_key::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      width: 6px;
+      height: 10px;
+      background: var(--ink);
+    }
+
+    /* CREATURE HEAD & ASYMMETRIC EYES */
+    .creature_head {
+      width: 100%;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 52px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .creature_patch {
+      position: absolute;
+      top: 6px;
+      right: 28%;
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--ink);
+      opacity: 0.4;
+      transform: rotate(18deg);
+      user-select: none;
+    }
+
+    .creature_eye {
+      width: 44px;
+      height: 48px;
+      background: #ffffff;
+      border: var(--border-thin);
+      border-radius: 46% 46% 50% 50%;
+      box-shadow: 3px 3px 0 var(--ink);
+      position: relative;
+      overflow: hidden;
+      transform-origin: center center;
+    }
+
+    .creature_pupil {
+      width: 22px;
+      height: 22px;
+      background: var(--ink);
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease-out;
+    }
+
+    .pupil_shine {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 6px;
+      height: 6px;
+      background: #ffffff;
+      border-radius: 50%;
+    }
+
+    .creature_eye.eye_closed {
+      background: transparent !important;
+      border-color: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .creature_eye.eye_closed .creature_pupil {
+      opacity: 0 !important;
+    }
+
+    .creature_eye.eye_closed::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 34px;
+      height: 0;
+      border-top: 4px solid var(--ink);
+      border-radius: 2px;
+    }
+
+    .creature_eye.eye_wince {
+      background: transparent !important;
+      border-color: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .creature_eye.eye_wince .creature_pupil {
+      opacity: 0 !important;
+    }
+
+    .creature_eye.eye_wince::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 32px;
+      height: 12px;
+      border-bottom: 4px solid var(--ink);
+      border-radius: 0 0 16px 16px;
+    }
+
+    .creature_eye.eye_left.eye_wince::after { transform: translate(-50%, -50%) rotate(18deg); }
+    .creature_eye.eye_right.eye_wince::after { transform: translate(-50%, -50%) rotate(-18deg); }
+
+    /* MONOCLE */
+    .creature_monocle {
+      position: absolute;
+      top: 4px;
+      right: calc(50% - 94px);
+      width: 52px;
+      height: 54px;
+      border: 3.5px solid var(--ink);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      box-shadow: 2px 2px 0 var(--ink);
+      z-index: 15;
+      opacity: 0;
+      transform: scale(0);
+    }
+
+    .creature_monocle::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      right: 4px;
+      width: 3px;
+      height: 12px;
+      background: var(--ink);
+      transform: rotate(-25deg);
+    }
+
+    /* MOUTH & SNOUT */
+    .creature_face_center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .creature_mouth {
+      width: 34px;
+      height: 12px;
+      border-bottom: 4px solid var(--ink);
+      border-radius: 0 0 16px 16px;
+      position: relative;
+      overflow: hidden;
+      background: transparent;
+      transition: all 0.2s ease;
+    }
+
+    .mouth_inner {
+      width: 100%;
+      height: 100%;
+      background: var(--red);
+      border-radius: inherit;
+      opacity: 0;
+    }
+
+    .creature_mouth.mouth_sleep {
+      width: 16px;
+      height: 16px;
+      border: 3.5px solid var(--ink);
+      border-radius: 50%;
+      background: var(--ink);
+    }
+
+    .creature_mouth.mouth_sleep .mouth_inner {
+      opacity: 0.8;
+      background: var(--red);
+    }
+
+    .creature_mouth.mouth_eating {
+      width: 56px;
+      height: 36px;
+      border: 4px solid var(--ink);
+      border-radius: 20px;
+      background: var(--red);
+      box-shadow: 0 0 0 4px var(--yellow);
+    }
+
+    .creature_mouth.mouth_eating .mouth_inner {
+      opacity: 1;
+    }
+
+    .creature_mouth.mouth_pleased {
+      width: 30px;
+      height: 14px;
+      border-bottom: 4px solid var(--ink);
+      border-radius: 0 0 18px 18px;
+    }
+
+    /* FLOATING SLEEP ZZZ */
+    .zzz_container {
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    .zzz_letter {
+      position: absolute;
+      font-weight: 900;
+      color: var(--ink);
+      opacity: 0;
+      user-select: none;
+    }
+
+    /* BELLY SECTION: ARMS & 16:9 VIEWPORT */
+    .creature_belly {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      position: relative;
+      min-height: 0;
+    }
+
+    .creature_arm {
+      position: relative;
+      z-index: 15;
+      display: flex;
+      align-items: center;
+    }
+
+    .arm_left { margin-right: -16px; margin-top: -6px; }
+    .arm_right { margin-left: -16px; }
+
+    .creature_paw {
+      background: var(--panel-bg);
+      border: var(--border-thin);
+      padding: 8px 6px;
+      box-shadow: 3px 3px 0 var(--ink);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .arm_left .creature_paw { border-radius: 18px 6px 6px 18px; }
+    .arm_right .creature_paw { border-radius: 6px 18px 18px 6px; }
+
+    .claw {
+      width: 18px;
+      height: 12px;
+      background: var(--yellow);
+      border: 2px solid var(--ink);
+      border-radius: 6px;
+      box-shadow: 1px 1px 0 var(--ink);
+    }
+
+    /* WEBCAM PORTAL VIEWPORT (16:9) */
+    .video_portal {
+      flex: 1;
+      height: 100%;
+      background: #18191c;
+      border: var(--border-thick);
+      border-radius: 16px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .portal_bracket {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-color: var(--yellow);
+      border-style: solid;
+      border-width: 0;
+      z-index: 12;
+      opacity: 0.8;
+    }
+
+    .bracket_tl { top: 12px; left: 12px; border-top-width: 4px; border-left-width: 4px; }
+    .bracket_tr { top: 12px; right: 12px; border-top-width: 4px; border-right-width: 4px; }
+    .bracket_bl { bottom: 12px; left: 12px; border-bottom-width: 4px; border-left-width: 4px; }
+    .bracket_br { bottom: 12px; right: 12px; border-bottom-width: 4px; border-right-width: 4px; }
+
+    /* SIMULATED WEBCAM FEED CONTENT */
+    .webcam_content {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 50% 50%, #2b2e38 0%, #15161c 100%);
+    }
+
+    .webcam_avatar {
+      width: 320px;
+      height: 380px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .avatar_head {
+      width: 170px;
+      height: 190px;
+      background: #ffe0b2;
+      border: 4px solid var(--ink);
+      border-radius: 80px 80px 70px 70px;
+      box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar_sunglasses {
+      width: 130px;
+      height: 42px;
+      background: var(--ink);
+      border-radius: 8px;
+      border: 3px solid #ffffff;
+      box-shadow: 2px 2px 0 rgba(0,0,0,0.4);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 10px;
+    }
+
+    .glass_glare {
+      width: 40px;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 4px;
+      transform: rotate(-15deg);
+    }
+
+    .avatar_smile {
+      width: 44px;
+      height: 20px;
+      border-bottom: 4px solid var(--ink);
+      border-radius: 0 0 20px 20px;
+      margin-top: 24px;
+    }
+
+    .avatar_body {
+      width: 240px;
+      height: 180px;
+      background: var(--coral);
+      border: 4px solid var(--ink);
+      border-radius: 90px 90px 0 0;
+      margin-top: -20px;
+    }
+
+    .cam_badge {
+      position: absolute;
+      bottom: 16px;
+      left: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(18, 18, 18, 0.85);
+      border: 2px solid #ffffff;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .rec_dot {
+      width: 10px;
+      height: 10px;
+      background: var(--red);
+      border-radius: 50%;
+    }
+
+    /* COUNTDOWN OVERLAY */
+    .countdown_overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(18, 18, 18, 0.6);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 25;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .countdown_card {
+      background: var(--panel-bg);
+      border: var(--border-thick);
+      border-radius: 20px;
+      padding: 24px 48px;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .countdown_num {
+      font-size: 96px;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--ink);
+    }
+
+    .countdown_txt {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      background: var(--yellow);
+      padding: 4px 12px;
+      border: var(--border-thin);
+      border-radius: 6px;
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    /* FLASH SCREEN */
+    .flash_overlay {
+      position: absolute;
+      inset: 0;
+      background: #ffffff;
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* RIGHT: FILTERS PANEL */
+    .filters_panel {
+      background: var(--panel-bg);
+      border: var(--border-thick);
+      border-radius: 20px;
+      box-shadow: var(--shadow-base);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .filter_list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .filter_btn {
+      width: 100%;
+      height: 52px;
+      background: var(--gray-1);
+      border: var(--border-thin);
+      border-radius: 12px;
+      box-shadow: 3px 3px 0 var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 0 16px;
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .filter_btn.active {
+      background: var(--ink);
+      color: var(--yellow);
+    }
+
+    .filter_circle {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px solid var(--ink);
+    }
+
+    .circle_norm { background: linear-gradient(135deg, #a0c4ff, #c7f9cc); }
+    .circle_vintage { background: linear-gradient(135deg, #d4a373, #faedcd); }
+    .circle_bw { background: linear-gradient(135deg, #000000, #ffffff); }
+
+    /* BOTTOM ROW: TAKE BUTTON */
+    .bottom_bar {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 76px;
+    }
+
+    .take_btn {
+      width: 480px;
+      height: 72px;
+      background: var(--yellow);
+      border: var(--border-thick);
+      border-radius: 16px;
+      box-shadow: var(--shadow-base);
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: var(--ink);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      transition: all 0.15s ease;
+    }
+
+    /* 4-CUT PHOTO STRIP */
+    .photo_strip_flying {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 180px;
+      height: 480px;
+      background: #111111;
+      border: 4px solid var(--ink);
+      border-radius: 12px;
+      box-shadow: 8px 8px 0 var(--ink);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 60;
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+    }
+
+    .strip_shot {
+      flex: 1;
+      background: #252836;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .strip_footer {
+      height: 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 4px;
+      color: #ff3366;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+    }
+
+    /* VIRTUAL MOUSE CURSOR */
+    .virtual_cursor {
+      position: absolute;
+      width: 38px;
+      height: 38px;
+      z-index: 100;
+      pointer-events: none;
+      filter: drop-shadow(4px 4px 0 var(--ink));
+      transform: translate(960px, 1200px);
+    }
+
+    /* NEO-BRUTALIST TOAST HEADLINE CARDS */
+    .headline_card {
+      position: absolute;
+      top: 520px;
+      left: 50%;
+      transform: translateX(-50%) translateY(0) scale(0.9);
+      background: var(--yellow);
+      border: var(--border-thick);
+      border-radius: 16px;
+      box-shadow: var(--shadow-lg);
+      padding: 16px 36px;
+      text-align: center;
+      z-index: 80;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .card_main_text {
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      color: var(--ink);
+      line-height: 1.1;
+    }
+
+    .card_sub_text {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--ink);
+      opacity: 0.85;
+      margin-top: 6px;
+    }
+
+    /* FINAL OUTRO HERO CARD */
+    .outro_card {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      background: var(--panel-bg);
+      border: var(--border-thick);
+      border-radius: 28px;
+      box-shadow: 12px 12px 0 var(--ink);
+      padding: 48px 64px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      z-index: 90;
+      opacity: 0;
+      pointer-events: none;
+      text-align: center;
+    }
+
+    .outro_title {
+      font-size: 68px;
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      line-height: 1;
+      color: var(--ink);
+    }
+
+    .outro_badge {
+      background: var(--yellow);
+      color: var(--ink);
+      font-size: 24px;
+      font-weight: 900;
+      padding: 8px 24px;
+      border: var(--border-thick);
+      border-radius: 12px;
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+
+    .outro_desc {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--gray-5);
+      max-width: 640px;
+    }
+
+    .outro_btn {
+      margin-top: 12px;
+      padding: 16px 48px;
+      background: var(--ink);
+      color: var(--yellow);
+      border: var(--border-thick);
+      border-radius: 14px;
+      font-size: 26px;
+      font-weight: 900;
+      box-shadow: 6px 6px 0 var(--yellow);
+    }
+  
+    /* HAPPY PETTING EYES */
+    .creature_eye.eye_happy {
+      background: transparent !important;
+      border-color: transparent !important;
+      box-shadow: none !important;
+    }
+    .creature_eye.eye_happy .creature_pupil {
+      opacity: 0 !important;
+    }
+    .creature_eye.eye_happy::after {
+      content: "";
+      position: absolute;
+      top: 56%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 32px;
+      height: 16px;
+      border-top: 4px solid var(--ink);
+      border-radius: 16px 16px 0 0;
+      box-sizing: border-box;
+    }
+
+    /* FLOATING PETTING EMOTE */
+    .pet_emote {
+      position: absolute;
+      font-size: 32px;
+      pointer-events: none;
+      z-index: 50;
+      opacity: 0;
+    }
+
+    /* BURP BUBBLE */
+    .burp_bubble {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 28px;
+      height: 28px;
+      border: 3px solid var(--ink);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: inset -2px -2px 0 rgba(108, 126, 225, 0.4);
+      z-index: 40;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    /* RETRO PIXEL SHADES */
+    .creature_shades {
+      position: absolute;
+      top: 0px;
+      left: 50%;
+      width: 176px;
+      height: 40px;
+      z-index: 25;
+      pointer-events: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      isolation: isolate;
+      opacity: 0;
+    }
+    .creature_shades .shade_lens {
+      width: 44px;
+      height: 40px;
+      background: var(--ink);
+      border: 2.5px solid #ffffff;
+      border-radius: 6px;
+      box-shadow: 3px 3px 0 var(--ink);
+      position: relative;
+      overflow: hidden;
+      z-index: 2;
+    }
+    .creature_shades .shade_bridge {
+      position: absolute;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 8px;
+      background: var(--ink);
+      z-index: 1;
+    }
+    .creature_shades .shade_glare {
+      position: absolute;
+      top: 12px;
+      left: -10px;
+      width: 60px;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.4);
+      transform: rotate(-30deg);
+    }
+
+    /* CONFETTI PARTICLE */
+    .confetti_item {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border: 2px solid var(--ink);
+      box-shadow: 2px 2px 0 var(--ink);
+      z-index: 99;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+  </style>
+</head>
+<body>
+  <div
+    id="root"
+    data-composition-id="main"
+    data-start="0"
+    data-duration="21.0"
+    data-width="1920"
+    data-height="1080"
+  >
+
+    
+    <!-- AUDIO TRACKS -->
+    <audio id="bg-music" data-start="0" data-duration="21.0" data-track-index="10" data-volume="0.35" src="assets/music/happy-beats-business-moves-vol-10-by-ende-dot-app.mp3"></audio>
+    <audio id="sfx-purr" data-start="0.9" data-duration="0.18" data-track-index="11" data-volume="0.8" src="assets/sfx/impact/impactSoft_medium_001.ogg"></audio>
+    <audio id="sfx-eye-pop" data-start="1.4" data-duration="0.19" data-track-index="12" data-volume="0.75" src="assets/sfx/impact/impactSoft_medium_001.ogg"></audio>
+    <audio id="sfx-theme-click" data-start="4.6" data-duration="0.05" data-track-index="13" data-volume="0.7" src="assets/sfx/interface/click_002.ogg"></audio>
+    <audio id="sfx-monocle" data-start="6.3" data-duration="0.21" data-track-index="14" data-volume="0.75" src="assets/sfx/impact/impactGlass_light_001.ogg"></audio>
+    <audio id="sfx-take-btn" data-start="8.4" data-duration="0.62" data-track-index="15" data-volume="0.8" src="assets/sfx/impact/impactPlate_medium_001.ogg"></audio>
+    <audio id="sfx-tick-3" data-start="9.0" data-duration="0.5" data-track-index="16" data-volume="0.65" src="assets/sfx/interface/switch_001.ogg"></audio>
+    <audio id="sfx-tick-2" data-start="10.0" data-duration="0.5" data-track-index="17" data-volume="0.65" src="assets/sfx/interface/switch_001.ogg"></audio>
+    <audio id="sfx-tick-1" data-start="11.0" data-duration="0.5" data-track-index="18" data-volume="0.65" src="assets/sfx/interface/switch_001.ogg"></audio>
+    <audio id="sfx-flash" data-start="11.5" data-duration="0.51" data-track-index="19" data-volume="0.85" src="assets/sfx/impact/impactSoft_heavy_000.ogg"></audio>
+    <audio id="sfx-photo-chomp" data-start="13.9" data-duration="0.78" data-track-index="20" data-volume="0.8" src="assets/sfx/impact/impactPlank_medium_001.ogg"></audio>
+    <audio id="sfx-swallow-gulp" data-start="14.5" data-duration="0.13" data-track-index="21" data-volume="0.8" src="assets/sfx/interface/bong_001.ogg"></audio>
+    <audio id="sfx-bubble-pop" data-start="15.8" data-duration="0.01" data-track-index="22" data-volume="0.85" src="assets/sfx/interface/click_002.ogg"></audio>
+    <audio id="sfx-memory-chime" data-start="16.6" data-duration="1.48" data-track-index="23" data-volume="0.85" src="assets/sfx/impact/impactBell_heavy_000.ogg"></audio>
+    <audio id="sfx-fanfare" data-start="17.7" data-duration="1.2" data-track-index="24" data-volume="0.85" src="assets/sfx/impact/impactBell_heavy_000.ogg"></audio>
+    <audio id="sfx-outro-slam" data-start="19.2" data-duration="0.51" data-track-index="25" data-volume="0.85" src="assets/sfx/impact/impactSoft_heavy_000.ogg"></audio>
+
+<!-- FULL PHOTOBOOTH APPLICATION -->
+    <div class="app_container" id="app_container">
+
+      <!-- TOP HEADER -->
+      <header class="top_header">
+        <div class="brand_section">
+          <h1 class="brand_title">Photobooth Station</h1>
+          <span class="brand_subtitle">RETRO SNAP STUDIO</span>
+        </div>
+        <div class="header_tools">
+          <div class="tool_btn">
+            <span>Mirrored</span>
+          </div>
+          <div class="tool_btn">
+            <span>Switch Cam</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- TOP CONTROLS ROW -->
+      <div class="controls_row">
+        <div class="ctrl_group">
+          <span class="ctrl_label">MODE</span>
+          <div class="segmented">
+            <button class="seg_btn" id="mode_single">Single</button>
+            <button class="seg_btn active" id="mode_strip">4-Cut Strip</button>
+          </div>
+        </div>
+
+        <div class="ctrl_group">
+          <span class="ctrl_label">TIMER</span>
+          <div class="segmented">
+            <button class="seg_btn">Off</button>
+            <button class="seg_btn active" id="timer_btn">3s</button>
+            <button class="seg_btn">5s</button>
+          </div>
+        </div>
+
+        <div class="ctrl_group">
+          <span class="ctrl_label">TIMESTAMP</span>
+          <div class="stamp_tag">
+            <span>ON</span>
+            <span>'26 09 18</span>
+          </div>
+        </div>
+
+        <div class="ctrl_group">
+          <span class="ctrl_label">THEME</span>
+          <div class="theme_swatches">
+            <div class="swatch mono active" id="swatch_mono"></div>
+            <div class="swatch pastel" id="swatch_pastel"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAIN 3-COLUMN LAYOUT -->
+      <div class="main_grid">
+
+        <!-- COLUMN 1: MEMORIES PANEL -->
+        <aside class="memories_panel" id="memories_panel">
+          <div class="panel_title_bar">
+            <h2 class="panel_title">Memories</h2>
+            <div class="clear_btn">Clear</div>
+          </div>
+          <div class="memories_scroll" id="memories_scroll">
+            <div class="memory_thumb" id="existing_memory">
+              <div class="memory_strip_slot" style="background: #e17a8d;"></div>
+              <div class="memory_strip_slot" style="background: #8d9ac5;"></div>
+              <div class="memory_strip_slot" style="background: #5567c9;"></div>
+            </div>
+            <!-- Newly swallowed memory strip -->
+            <div class="memory_thumb" id="new_memory" style="opacity: 0; transform: translateY(-20px);">
+              <div class="memory_strip_slot" style="background: #252836;"></div>
+              <div class="memory_strip_slot" style="background: #393e54;"></div>
+              <div class="memory_strip_slot" style="background: #1f222e;"></div>
+              <div style="font-size: 10px; font-weight: 900; color: #ca2851; text-align: right; padding-top: 2px;">'26 09 18</div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- COLUMN 2: CAMERA CREATURE -->
+        <main class="creature_container">
+          <div class="creature_shell" id="creature_shell">
+
+            <!-- EARS -->
+            <div class="creature_ear ear_left" id="ear_left">
+              <div class="ear_inner"></div>
+            </div>
+            <div class="creature_ear ear_right" id="ear_right">
+              <div class="ear_inner"></div>
+            </div>
+
+            <!-- WINDUP KEY -->
+            <div class="windup_key" id="windup_key"></div>
+
+            <!-- HEAD & ASYMMETRIC EYES -->
+            <div class="creature_head">
+
+                    <!-- Secret Retro Pixel Shades -->
+                    <div class="creature_shades" id="creature_shades" style="opacity: 0;" data-layout-allow-overlap="true" data-layout-allow-occlusion="true">
+                      <div class="shade_bridge"></div>
+                      <div class="shade_lens"><div class="shade_glare"></div></div>
+                      <div class="shade_lens"><div class="shade_glare"></div></div>
+                    </div>
+
+                    <!-- Pet Emotes -->
+                    <div class="pet_emote" id="pet_emote_heart" style="top: -24px; left: 45%; opacity: 0;">💛</div>
+                    <div class="pet_emote" id="pet_emote_sparkle" style="top: -20px; right: 25%; opacity: 0;">✨</div>
+
+                    <!-- Burp Bubble -->
+                    <div class="burp_bubble" id="burp_bubble" style="opacity: 0;"></div>
+
+              <span class="creature_patch">+</span>
+
+              <!-- LEFT EYE -->
+              <div class="creature_eye eye_left eye_closed" id="eye_left">
+                <div class="creature_pupil" id="pupil_left">
+                  <div class="pupil_shine"></div>
+                </div>
+              </div>
+
+              <!-- SNOUT, MOUTH & ZZZ -->
+              <div class="creature_face_center">
+                <div class="creature_mouth mouth_sleep" id="creature_mouth">
+                  <div class="mouth_inner"></div>
+                </div>
+                <div class="zzz_container" id="zzz_container" data-layout-allow-overlap="true">
+                  <span class="zzz_letter" id="z1" style="font-size: 20px;" data-layout-allow-overlap="true">Z</span>
+                  <span class="zzz_letter" id="z2" style="font-size: 26px;" data-layout-allow-overlap="true">Z</span>
+                  <span class="zzz_letter" id="z3" style="font-size: 32px;" data-layout-allow-overlap="true">Z</span>
+                </div>
+              </div>
+
+              <!-- RIGHT EYE -->
+              <div class="creature_eye eye_right eye_closed" id="eye_right">
+                <div class="creature_pupil" id="pupil_right">
+                  <div class="pupil_shine"></div>
+                </div>
+              </div>
+
+              <!-- FILTER MONOCLE -->
+              <div class="creature_monocle" id="creature_monocle"></div>
+            </div>
+
+            <!-- BELLY & 16:9 VIEWPORT -->
+            <div class="creature_belly">
+              <!-- LEFT ARM -->
+              <div class="creature_arm arm_left" id="arm_left">
+                <div class="creature_paw">
+                  <span class="claw"></span>
+                  <span class="claw"></span>
+                  <span class="claw"></span>
+                </div>
+              </div>
+
+              <!-- 16:9 WEBCAM PORTAL -->
+              <div class="video_portal" id="video_portal">
+                <div class="portal_bracket bracket_tl"></div>
+                <div class="portal_bracket bracket_tr"></div>
+                <div class="portal_bracket bracket_bl"></div>
+                <div class="portal_bracket bracket_br"></div>
+
+                <!-- SIMULATED WEBCAM FEED -->
+                <div class="webcam_content" id="webcam_content">
+                  <div class="webcam_avatar" id="webcam_avatar">
+                    <div class="avatar_head">
+                      <div class="avatar_sunglasses">
+                        <div class="glass_glare"></div>
+                        <div class="glass_glare"></div>
+                      </div>
+                      <div class="avatar_smile"></div>
+                    </div>
+                    <div class="avatar_body"></div>
+                  </div>
+                  <div class="cam_badge">
+                    <span class="rec_dot"></span>
+                    <span>LIVE HD • 16:9</span>
+                  </div>
+                </div>
+
+                <!-- COUNTDOWN OVERLAY -->
+                <div class="countdown_overlay" id="countdown_overlay" data-layout-allow-overlap="true" data-layout-allow-occlusion="true">
+                  <div class="countdown_card">
+                    <span class="countdown_num" id="countdown_num">3</span>
+                    <span class="countdown_txt">GET READY!</span>
+                  </div>
+                </div>
+
+                <!-- WHITE FLASH -->
+                <div class="flash_overlay" id="flash_overlay" data-layout-allow-overlap="true" data-layout-allow-occlusion="true"></div>
+              </div>
+
+              <!-- RIGHT ARM -->
+              <div class="creature_arm arm_right" id="arm_right">
+                <div class="creature_paw">
+                  <span class="claw"></span>
+                  <span class="claw"></span>
+                  <span class="claw"></span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </main>
+
+        <!-- COLUMN 3: FILTERS PANEL -->
+        <aside class="filters_panel" id="filters_panel">
+          <div class="panel_title_bar">
+            <h2 class="panel_title">Filters</h2>
+          </div>
+          <div class="filter_list">
+            <div class="filter_btn active" id="f_normal">
+              <span class="filter_circle circle_norm"></span>
+              <span>Normal</span>
+            </div>
+            <div class="filter_btn" id="f_vintage">
+              <span class="filter_circle circle_vintage"></span>
+              <span>Vintage</span>
+            </div>
+            <div class="filter_btn" id="f_bw">
+              <span class="filter_circle circle_bw"></span>
+              <span>Mono B&W</span>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+
+      <!-- BOTTOM BAR: TAKE BUTTON -->
+      <footer class="bottom_bar">
+        <button class="take_btn" id="take_btn">
+          <span>📸</span>
+          <span>TAKE!</span>
+        </button>
+      </footer>
+
+    </div>
+
+    <!-- FLYING 4-CUT PHOTO STRIP -->
+    <div class="photo_strip_flying" id="photo_strip" data-layout-allow-overlap="true" data-layout-allow-occlusion="true">
+      <div class="strip_shot" style="background: #ffc4a4;"></div>
+      <div class="strip_shot" style="background: #fba2d0;"></div>
+      <div class="strip_shot" style="background: #92b9e3;"></div>
+      <div class="strip_shot" style="background: #6c7ee1;"></div>
+      <div class="strip_footer">
+        <span>PHOTOBOOTH</span>
+        <span>'26 09 18</span>
+      </div>
+    </div>
+
+    <div id="confetti_container" data-layout-allow-overlap="true" data-layout-allow-occlusion="true">
+  <div class="confetti_item" id="cf_0" style="background: #ffe600; top: 400px; left: 960px; opacity: 0;"></div>
+  <div class="confetti_item" id="cf_1" style="background: #6C7EE1; top: 400px; left: 960px; opacity: 0;"></div>
+  <div class="confetti_item" id="cf_2" style="background: #FBA2D0; top: 400px; left: 960px; opacity: 0;"></div>
+  <div class="confetti_item" id="cf_3" style="background: #B0D4B8; top: 400px; left: 960px; opacity: 0;"></div>
+  <div class="confetti_item" id="cf_4" style="background: #E17A8D; top: 400px; left: 960px; opacity: 0;"></div>
+  <div class="confetti_item" id="cf_5" style="background: #121212; top: 400px; left: 960px; opacity: 0;"></div>
+  <div class="confetti_item" id="cf_6" style="background: #ffffff; top: 400px; left: 960px; opacity: 0;"></div>
+  <div class="confetti_item" id="cf_7" style="background: #ffe600; top: 400px; left: 960px; opacity: 0;"></div>
+  <div class="confetti_item" id="cf_8" style="background: #6C7EE1; top: 400px; left: 960px; opacity: 0;"></div>
+  <div class="confetti_item" id="cf_9" style="background: #FBA2D0; top: 400px; left: 960px; opacity: 0;"></div>
+  <div class="confetti_item" id="cf_10" style="background: #B0D4B8; top: 400px; left: 960px; opacity: 0;"></div>
+  <div class="confetti_item" id="cf_11" style="background: #E17A8D; top: 400px; left: 960px; opacity: 0;"></div>
+  <div class="confetti_item" id="cf_12" style="background: #121212; top: 400px; left: 960px; opacity: 0;"></div>
+  <div class="confetti_item" id="cf_13" style="background: #ffffff; top: 400px; left: 960px; opacity: 0;"></div>
+  <div class="confetti_item" id="cf_14" style="background: #ffe600; top: 400px; left: 960px; opacity: 0;"></div>
+  <div class="confetti_item" id="cf_15" style="background: #6C7EE1; top: 400px; left: 960px; opacity: 0;"></div>
+  <div class="confetti_item" id="cf_16" style="background: #FBA2D0; top: 400px; left: 960px; opacity: 0;"></div>
+  <div class="confetti_item" id="cf_17" style="background: #B0D4B8; top: 400px; left: 960px; opacity: 0;"></div>
+  <div class="confetti_item" id="cf_18" style="background: #E17A8D; top: 400px; left: 960px; opacity: 0;"></div>
+  <div class="confetti_item" id="cf_19" style="background: #121212; top: 400px; left: 960px; opacity: 0;"></div>
+  <div class="confetti_item" id="cf_20" style="background: #ffffff; top: 400px; left: 960px; opacity: 0;"></div>
+  <div class="confetti_item" id="cf_21" style="background: #ffe600; top: 400px; left: 960px; opacity: 0;"></div>
+  <div class="confetti_item" id="cf_22" style="background: #6C7EE1; top: 400px; left: 960px; opacity: 0;"></div>
+  <div class="confetti_item" id="cf_23" style="background: #FBA2D0; top: 400px; left: 960px; opacity: 0;"></div>
+</div>
+
+    <!-- VIRTUAL POINTER CURSOR -->
+    <svg class="virtual_cursor" id="virtual_cursor" viewBox="0 0 24 24" data-layout-allow-overlap="true" data-layout-allow-occlusion="true">
+      <path fill="#ffffff" stroke="#121212" stroke-width="2.5" stroke-linejoin="round" d="M4 2l16 9.5-8.5 2-3 8.5z"/>
+    </svg>
+
+    <!-- SCENE HEADLINE CARDS (POSITIONED IN CLEAR VIEWPORT ZONE) -->
+    <div class="headline_card" id="card_scene1" data-layout-allow-overlap="true" data-layout-allow-occlusion="true">
+      <div class="card_main_text">MEET YOUR WEBCAM.</div>
+      <div class="card_sub_text">Warning: It purrs when you pet it 💛</div>
+    </div>
+
+    <div class="headline_card" id="card_scene2" data-layout-allow-overlap="true" data-layout-allow-occlusion="true">
+      <div class="card_main_text">100% NEO-BRUTALIST</div>
+      <div class="card_sub_text">Interactive themes, vintage optics & tactile physics</div>
+    </div>
+
+    <div class="headline_card" id="card_scene4" style="background: #ffb3c1;" data-layout-allow-overlap="true" data-layout-allow-occlusion="true">
+      <div class="card_main_text">IT EATS YOUR PHOTOS!</div>
+      <div class="card_sub_text">(and burps cartoon bubbles!)</div>
+    </div>
+
+    <div class="outro_card" id="card_outro" data-layout-allow-overlap="true" data-layout-allow-occlusion="true">
+      <div class="outro_badge">RETRO SNAP STUDIO • 2026</div>
+      <div class="outro_title">PHOTOBOOTH STATION</div>
+      <div class="outro_desc">The quirky web photobooth where your camera has a personality.</div>
+      <div class="outro_btn">FEED YOUR CAMERA NOW</div>
+    </div>
+
+  </div>
+
+    <!-- TIMELINE SCRIPT -->
+  <script>
+    window.__timelines = window.__timelines || {};
+
+    // Initial setups outside timeline using pure GSAP properties
+    gsap.set("#countdown_num", { scale: 1.0 });
+    gsap.set("#photo_strip", { opacity: 0, scale: 0.2, rotation: -12, x: 0, y: 50 });
+    gsap.set("#virtual_cursor", { x: 1400, y: 900, scale: 1.0 });
+    gsap.set("#card_scene1", { opacity: 0, y: 30, scale: 0.8 });
+    gsap.set("#card_scene2", { opacity: 0, y: 30, scale: 0.8 });
+    gsap.set("#card_scene4", { opacity: 0, y: 30, scale: 0.8 });
+    gsap.set("#card_outro", { opacity: 0, scale: 0.5, y: -50 });
+    gsap.set("#pet_emote_heart", { opacity: 0, scale: 0.4, y: 0 });
+    gsap.set("#pet_emote_sparkle", { opacity: 0, scale: 0.4, y: 0 });
+    gsap.set("#burp_bubble", { opacity: 0, xPercent: -50, y: 0, scale: 0 });
+    gsap.set("#creature_shades", { opacity: 0, xPercent: -50, scale: 0, rotation: 0 });
+
+    for (let i = 0; i < 24; i++) {
+      gsap.set("#cf_" + i, { opacity: 0, scale: 0.2, x: 0, y: 0 });
+    }
+
+    const tl = gsap.timeline({ paused: true });
+
+    // =========================================================
+    // SCENE 1: THE PURRING WEBCAM (0.0s – 3.8s)
+    // =========================================================
+
+    // Floating Z Z Z letters drifting upward
+    tl.fromTo("#z1", 
+      { opacity: 0, x: 0, y: 0, scale: 0.8 }, 
+      { opacity: 0.9, x: 14, y: -24, scale: 1.1, duration: 0.8, ease: "sine.out", immediateRender: false }, 
+      0.1
+    );
+    tl.to("#z1", { opacity: 0, x: 26, y: -48, scale: 1.3, duration: 0.5, ease: "sine.in" }, 0.9);
+
+    tl.fromTo("#z2", 
+      { opacity: 0, x: 0, y: 0, scale: 0.8 }, 
+      { opacity: 0.9, x: -16, y: -30, scale: 1.1, duration: 0.8, ease: "sine.out", immediateRender: false }, 
+      0.3
+    );
+    tl.to("#z2", { opacity: 0, x: -30, y: -60, scale: 1.3, duration: 0.5, ease: "sine.in" }, 1.1);
+
+    // Virtual cursor darts into frame to pet creature's forehead
+    tl.to("#virtual_cursor", 
+      { x: 960, y: 410, duration: 0.8, ease: "power2.out" }, 
+      0.1
+    );
+
+    // Petting motion: cursor strokes left-right-left
+    tl.to("#virtual_cursor", { x: 920, duration: 0.25, ease: "sine.inOut" }, 0.9);
+    tl.to("#virtual_cursor", { x: 1000, duration: 0.3, ease: "sine.inOut" }, 1.15);
+    tl.to("#virtual_cursor", { x: 950, duration: 0.25, ease: "sine.inOut" }, 1.45);
+
+    // At 0.9s: Creature enters blissful petting mode!
+    // Eyes turn into happy arches (^ ^), ears flutter!
+    tl.call(() => {
+      document.getElementById("eye_left").classList.remove("eye_closed");
+      document.getElementById("eye_right").classList.remove("eye_closed");
+      document.getElementById("eye_left").classList.add("eye_happy");
+      document.getElementById("eye_right").classList.add("eye_happy");
+      document.getElementById("creature_mouth").classList.remove("mouth_sleep");
+      document.getElementById("creature_mouth").classList.add("mouth_pleased");
+    }, null, 0.9);
+
+    // Ear flutter
+    tl.to("#ear_left", { rotation: -26, duration: 0.15, yoyo: true, repeat: 5, ease: "sine.inOut" }, 0.9);
+    tl.to("#ear_right", { rotation: 26, duration: 0.15, yoyo: true, repeat: 5, ease: "sine.inOut" }, 0.9);
+
+    // Floating heart & sparkle emotes float up
+    tl.fromTo("#pet_emote_heart", 
+      { opacity: 0, scale: 0.4, y: 0 }, 
+      { opacity: 1, scale: 1.2, y: -35, duration: 0.5, ease: "back.out(2)", immediateRender: false }, 
+      1.1
+    );
+    tl.to("#pet_emote_heart", { opacity: 0, y: -65, duration: 0.4, ease: "power1.in" }, 1.6);
+
+    tl.fromTo("#pet_emote_sparkle", 
+      { opacity: 0, scale: 0.4, y: 0 }, 
+      { opacity: 1, scale: 1.2, y: -40, duration: 0.5, ease: "back.out(2)", immediateRender: false }, 
+      1.3
+    );
+    tl.to("#pet_emote_sparkle", { opacity: 0, y: -70, duration: 0.4, ease: "power1.in" }, 1.8);
+
+    // Creature eyes open normally after petting (1.9s)
+    tl.call(() => {
+      document.getElementById("eye_left").classList.remove("eye_happy");
+      document.getElementById("eye_right").classList.remove("eye_happy");
+      document.getElementById("creature_mouth").classList.remove("mouth_pleased");
+    }, null, 1.9);
+
+    tl.fromTo(["#eye_left", "#eye_right"], 
+      { scale: 0.8 }, 
+      { scale: 1.1, duration: 0.25, ease: "back.out(2)", immediateRender: false }, 
+      1.9
+    );
+    tl.to(["#eye_left", "#eye_right"], { scale: 1.0, duration: 0.2 }, 2.15);
+
+    // beat-locked: 2.1s -> Scene 1 headline slams in
+    tl.to("#card_scene1", 
+      { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "back.out(1.8)" }, 
+      2.1
+    );
+    // Hold headline until 3.6s
+    tl.to("#card_scene1", 
+      { opacity: 0, y: 20, scale: 0.95, duration: 0.25, ease: "power2.in" }, 
+      3.6
+    );
+
+    // =========================================================
+    // SCENE 2: LIVING VIEWFINDER & THEME SWITCH (3.8s – 7.8s)
+    // =========================================================
+
+    // Cursor moves to click Pastel theme swatch
+    tl.to("#virtual_cursor", 
+      { x: 1210, y: 154, duration: 0.7, ease: "power2.inOut" }, 
+      3.8
+    );
+
+    // Cursor click down at 4.64s (beat-locked)
+    tl.to("#virtual_cursor", { scale: 0.85, duration: 0.1, yoyo: true, repeat: 1 }, 4.64);
+
+    // Swatch switch to Pastel Dream
+    tl.call(() => {
+      document.getElementById("swatch_mono").classList.remove("active");
+      document.getElementById("swatch_pastel").classList.add("active");
+      document.getElementById("root").style.backgroundColor = "var(--bg-pastel)";
+      document.getElementById("take_btn").style.backgroundColor = "var(--pastel-pink)";
+      document.getElementById("take_btn").style.color = "var(--ink)";
+    }, null, 4.64);
+
+    // Headline 2 enters at 4.8s
+    tl.to("#card_scene2", 
+      { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "back.out(1.8)" }, 
+      4.8
+    );
+
+    // Cursor moves to click Vintage Filter at 6.28s
+    tl.to("#virtual_cursor", 
+      { x: 1720, y: 460, duration: 0.8, ease: "power2.inOut" }, 
+      5.3
+    );
+
+    // Filter click down at 6.28s (beat-locked)
+    tl.to("#virtual_cursor", { scale: 0.85, duration: 0.1, yoyo: true, repeat: 1 }, 6.28);
+    tl.call(() => {
+      document.getElementById("f_normal").classList.remove("active");
+      document.getElementById("f_vintage").classList.add("active");
+      document.getElementById("video_portal").style.filter = "sepia(0.4) contrast(1.15) brightness(1.05)";
+    }, null, 6.28);
+
+    // Monocle pops onto right eye!
+    tl.fromTo("#creature_monocle", 
+      { opacity: 0, scale: 0 }, 
+      { opacity: 1, scale: 1.08, duration: 0.35, ease: "back.out(2)", immediateRender: false }, 
+      6.32
+    );
+
+    // Hold headline 2 until 7.6s
+    tl.to("#card_scene2", 
+      { opacity: 0, y: 20, scale: 0.95, duration: 0.25, ease: "power2.in" }, 
+      7.6
+    );
+
+    // =========================================================
+    // SCENE 3: THE SHOOT & THE FLASH (7.8s – 12.0s)
+    // =========================================================
+
+    // Cursor rushes down to the big TAKE button
+    tl.to("#virtual_cursor", 
+      { x: 960, y: 990, duration: 0.5, ease: "power3.inOut" }, 
+      7.7
+    );
+
+    // Creature leans forward in anticipation!
+    tl.to("#creature_shell", { y: -6, duration: 0.3, ease: "back.out(1.5)" }, 7.8);
+    tl.to(["#pupil_left", "#pupil_right"], { y: 8, duration: 0.3 }, 7.8);
+
+    // Slam TAKE button at 8.4s
+    tl.to("#virtual_cursor", { scale: 0.8, duration: 0.1, yoyo: true, repeat: 1 }, 8.4);
+    tl.to("#take_btn", 
+      { scale: 0.95, y: 4, boxShadow: "2px 2px 0 var(--ink)", duration: 0.1, yoyo: true, repeat: 1 }, 
+      8.4
+    );
+
+    // Windup key begins spinning rapidly!
+    tl.to("#windup_key", 
+      { rotation: 1080, duration: 3.0, ease: "none" }, 
+      8.5
+    );
+
+    // Countdown overlay appears
+    tl.to("#countdown_overlay", { opacity: 1, duration: 0.2 }, 8.7);
+
+    // Countdown 3
+    tl.call(() => { document.getElementById("countdown_num").textContent = "3"; }, null, 9.0);
+    tl.fromTo("#countdown_num", 
+      { scale: 1.4 }, 
+      { scale: 1.0, duration: 0.3, ease: "back.out(2)", immediateRender: false }, 
+      9.0
+    );
+
+    // Countdown 2
+    tl.call(() => { document.getElementById("countdown_num").textContent = "2"; }, null, 10.0);
+    tl.fromTo("#countdown_num", 
+      { scale: 1.4 }, 
+      { scale: 1.0, duration: 0.3, ease: "back.out(2)", immediateRender: false }, 
+      10.0
+    );
+
+    // Countdown 1
+    tl.call(() => { document.getElementById("countdown_num").textContent = "1"; }, null, 11.0);
+    tl.fromTo("#countdown_num", 
+      { scale: 1.4 }, 
+      { scale: 1.0, duration: 0.3, ease: "back.out(2)", immediateRender: false }, 
+      11.0
+    );
+
+    // Hide countdown overlay at 11.4s
+    tl.to("#countdown_overlay", { opacity: 0, duration: 0.08 }, 11.4);
+
+    // CAMERA FLASH (non-overlapping timing)
+    tl.fromTo("#flash_overlay", 
+      { opacity: 0 }, 
+      { opacity: 1, duration: 0.06, ease: "power4.in", immediateRender: false }, 
+      11.48
+    );
+    tl.to("#flash_overlay", 
+      { opacity: 0, duration: 0.5, ease: "power2.out" }, 
+      11.55
+    );
+
+    // Creature winces shut (> <) on flash with body recoil
+    tl.call(() => {
+      document.getElementById("eye_left").classList.add("eye_wince");
+      document.getElementById("eye_right").classList.add("eye_wince");
+      document.getElementById("creature_mouth").style.borderRadius = "50%";
+      document.getElementById("creature_mouth").style.width = "22px";
+      document.getElementById("creature_mouth").style.height = "22px";
+      document.getElementById("creature_mouth").style.background = "var(--ink)";
+    }, null, 11.5);
+    tl.to("#creature_shell", { y: 12, duration: 0.15, ease: "power3.out" }, 11.5);
+
+    // Relax from wince at 12.1s
+    tl.call(() => {
+      document.getElementById("eye_left").classList.remove("eye_wince");
+      document.getElementById("eye_right").classList.remove("eye_wince");
+      document.getElementById("creature_mouth").style.borderRadius = "0 0 16px 16px";
+      document.getElementById("creature_mouth").style.width = "34px";
+      document.getElementById("creature_mouth").style.height = "12px";
+      document.getElementById("creature_mouth").style.background = "transparent";
+    }, null, 12.1);
+    tl.to("#creature_shell", { y: 0, duration: 0.3, ease: "back.out(1.5)" }, 12.1);
+
+    // =========================================================
+    // SCENE 4: THE FEAST & BURP BUBBLE (12.0s – 16.5s)
+    // =========================================================
+
+    // Headline 4 slams down
+    tl.to("#card_scene4", 
+      { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "back.out(1.8)" }, 
+      12.1
+    );
+
+    // Photo strip materializes out of viewport
+    tl.to("#photo_strip", 
+      { opacity: 1, scale: 1.0, rotation: 4, y: 0, duration: 0.5, ease: "back.out(1.6)" }, 
+      12.2
+    );
+
+    // Creature mouth opens wide into chomping maw (`mouth_eating`)
+    tl.call(() => {
+      document.getElementById("creature_mouth").classList.add("mouth_eating");
+    }, null, 13.0);
+
+    // Mouth chomps up and down
+    tl.fromTo("#creature_mouth", 
+      { scaleY: 0.8 }, 
+      { scaleY: 1.25, duration: 0.18, yoyo: true, repeat: 4, ease: "power1.inOut", immediateRender: false }, 
+      13.1
+    );
+
+    // Photo strip flies in a curved arc right into creature's mouth
+    tl.to("#photo_strip", 
+      { y: -310, x: 0, scale: 0.45, rotation: -18, duration: 0.65, ease: "power2.in" }, 
+      13.5
+    );
+
+    // Gulp: photo strip shrinks into the mouth and vanishes
+    tl.to("#photo_strip", 
+      { scale: 0.05, opacity: 0, rotation: 30, duration: 0.2, ease: "power3.in" }, 
+      14.15
+    );
+
+    // Mouth closes
+    tl.call(() => {
+      document.getElementById("creature_mouth").classList.remove("mouth_eating");
+      document.getElementById("creature_mouth").classList.add("mouth_pleased");
+    }, null, 14.35);
+
+    // BELLY WIGGLE! (Digestion shaking at 14.8s, non-overlapping)
+    tl.fromTo("#creature_shell", 
+      { x: -5 }, 
+      { x: 5, duration: 0.08, yoyo: true, repeat: 7, ease: "sine.inOut" }, 
+      14.8
+    );
+    tl.to("#creature_shell", { x: 0, duration: 0.1 }, 15.46);
+
+    // BURP BUBBLE FLOATS UP FROM MOUTH! (15.48s)
+    tl.call(() => {
+      document.getElementById("creature_mouth").style.borderRadius = "50%";
+      document.getElementById("creature_mouth").style.width = "20px";
+      document.getElementById("creature_mouth").style.height = "20px";
+    }, null, 15.48);
+
+    tl.fromTo("#burp_bubble", 
+      { opacity: 0, scale: 0, xPercent: -50, y: 0 }, 
+      { opacity: 1, scale: 1.1, xPercent: -50, y: -45, duration: 0.35, ease: "back.out(2)", immediateRender: false }, 
+      15.48
+    );
+    // Bubble floats higher and pops!
+    tl.to("#burp_bubble", { y: -80, scale: 1.3, duration: 0.3, ease: "sine.out" }, 15.85);
+    tl.to("#burp_bubble", { opacity: 0, scale: 2.0, duration: 0.1, ease: "power4.out" }, 16.16);
+
+    // Reset mouth to pleased smile
+    tl.call(() => {
+      document.getElementById("creature_mouth").style.borderRadius = "0 0 16px 16px";
+      document.getElementById("creature_mouth").style.width = "34px";
+      document.getElementById("creature_mouth").style.height = "12px";
+    }, null, 16.22);
+
+    // Hide headline 4
+    tl.to("#card_scene4", { opacity: 0, y: 20, scale: 0.95, duration: 0.2 }, 16.22);
+
+    // =========================================================
+    // SCENE 5: SECRET PARTY SHADES & OUTRO (16.5s – 21.0s)
+    // =========================================================
+
+    // Memory card drops into the Memories panel!
+    tl.fromTo("#new_memory", 
+      { opacity: 0, y: -40, scale: 0.85 }, 
+      { opacity: 1, y: 0, scale: 1.0, duration: 0.4, ease: "back.out(2)", immediateRender: false }, 
+      16.5
+    );
+    tl.call(() => {
+      document.getElementById("new_memory").classList.add("memory_new_pulse");
+    }, null, 16.7);
+
+    // Cursor rushes to type "CHEESE" at 17.2s
+    tl.to("#virtual_cursor", { x: 960, y: 390, duration: 0.4, ease: "power2.out" }, 17.0);
+
+    // 17.6s: Retro pixel shades slam onto creature's face!
+    tl.fromTo("#creature_shades", 
+      { opacity: 0, scale: 0, xPercent: -50, rotation: -20 }, 
+      { opacity: 1, scale: 1.0, xPercent: -50, rotation: 0, duration: 0.35, ease: "back.out(2)", immediateRender: false }, 
+      17.6
+    );
+
+    // CONFETTI BURST! 24 colorful particles explode outward
+    for (let i = 0; i < 24; i++) {
+      const angle = (i / 24) * Math.PI * 2;
+      const dist = 180 + (i % 3) * 90;
+      const tx = Math.cos(angle) * dist;
+      const ty = Math.sin(angle) * dist - 60;
+      const rot = (i % 2 === 0 ? 1 : -1) * (180 + i * 25);
+
+      tl.fromTo("#cf_" + i, 
+        { opacity: 1, scale: 0.4, x: 0, y: 0, rotation: 0 }, 
+        { 
+          opacity: 1, 
+          scale: 1.1, 
+          x: tx, 
+          y: ty, 
+          rotation: rot, 
+          duration: 0.8, 
+          ease: "power2.out", 
+          immediateRender: false 
+        }, 
+        17.7
+      );
+      tl.to("#cf_" + i, { opacity: 0, y: ty + 80, duration: 0.6, ease: "power1.in" }, 18.5);
+    }
+
+    // 19.0s -> Outro Hero Badge slams down
+    tl.to("#card_outro", 
+      { opacity: 1, scale: 1.0, y: 0, duration: 0.5, ease: "back.out(1.5)" }, 
+      19.0
+    );
+
+    // Outro card breathes until 21.0s
+    tl.to("#card_outro", 
+      { scale: 1.02, duration: 0.9, yoyo: true, repeat: 1, ease: "sine.inOut" }, 
+      19.5
+    );
+
+    // Seek to 0 to be deterministic
+    tl.seek(0);
+    window.__timelines["main"] = tl;
+  </script>
+
+</body>
+</html>

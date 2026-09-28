@@ -203,7 +203,7 @@ const Creature = {
 
         targets.forEach(eye => {
             if (!eye) return;
-            eye.classList.remove('eye_blink', 'eye_wince', 'eye_wide', 'eye_sleepy', 'eye_closed', 'eye_squint');
+            eye.classList.remove('eye_blink', 'eye_wince', 'eye_wide', 'eye_sleepy', 'eye_closed', 'eye_squint', 'eye_happy');
             if (expression && expression !== 'normal') {
                 eye.classList.add(`eye_${expression}`);
             }
@@ -994,6 +994,10 @@ const Creature = {
         this.setEyeExpression('wide');
         this.setMouthState('open');
 
+        if (window.PTBWorld && window.PTBWorld.play) {
+            window.PTBWorld.play('windup', 650 + (remainingSeconds * 140));
+        }
+
         if (this.shell) {
             this.shell.classList.remove('creature_excited');
             this.shell.classList.add('portal_capturing', 'take_anticipation');
@@ -1008,6 +1012,10 @@ const Creature = {
     onFlash() {
         this.state = 'FLASH_WINCE';
         this.setEyeExpression('wince');
+        if (window.PTBWorld && window.PTBWorld.play) {
+            window.PTBWorld.play('flash');
+            window.PTBWorld.play('shutter');
+        }
         if (this.shell) {
             this.shell.classList.add('creature_recoil');
             setTimeout(() => {
