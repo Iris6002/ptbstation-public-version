@@ -357,7 +357,8 @@ body[data-theme="midnight"] {
 .camera_control_bar {
     flex: 1 1 auto;
     width: 100%;
-    height: 100px;
+    min-height: 52px;
+    height: auto;
     box-sizing: border-box;
     display: flex;
     align-items: center;
@@ -1930,26 +1931,28 @@ body[data-theme="midnight"] {
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 12px 14px 44px;
-        gap: 14px;
+        padding: 10px 12px 36px;
+        gap: 12px;
         box-sizing: border-box;
     }
 
-    /* Mobile Header */
+    /* Mobile Visual Order:
+       1. Header -> 2. Controls -> 3. CAMERA (Hero) -> 4. TAKE BUTTON -> 5. Filters -> 6. Memories */
     .top_header {
+        order: 1;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
         width: 100%;
-        padding-bottom: 10px;
+        padding-bottom: 8px;
         gap: 8px;
     }
 
     .brand_section {
         flex-shrink: 1;
         min-width: 0;
-        gap: 4px;
+        gap: 3px;
         flex-direction: column;
         align-items: flex-start;
     }
@@ -1984,19 +1987,43 @@ body[data-theme="midnight"] {
         gap: 5px;
     }
 
+    /* Tool buttons on mobile: Always show SVG icons cleanly centered */
     .tool_btn {
-        min-width: 0;
-        padding: 5px 8px;
-        height: 32px;
-        font-size: 11px;
-        border-radius: 8px;
-        box-shadow: 2px 2px 0 var(--black);
-        gap: 4px;
+        min-width: 34px !important;
+        width: 34px !important;
+        height: 34px !important;
+        padding: 0 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 9px !important;
+        box-shadow: 2px 2px 0 var(--black) !important;
+        overflow: hidden !important;
+        position: relative !important;
+    }
+
+    .tool_btn .btn_morph_text {
+        display: none !important;
+    }
+
+    .tool_btn .btn_morph_icon {
+        position: static !important;
+        transform: none !important;
+        opacity: 1 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 18px !important;
+        height: 18px !important;
+        pointer-events: auto !important;
+        color: currentColor !important;
     }
 
     .tool_btn .morph_svg {
-        width: 13px;
-        height: 13px;
+        width: 18px !important;
+        height: 18px !important;
+        display: block !important;
+        fill: currentColor !important;
     }
 
     /* Mobile Wire / Pull-chain */
@@ -2027,47 +2054,85 @@ body[data-theme="midnight"] {
 
     /* Mobile Controls Bar */
     .top_controls_row {
+        order: 2;
         width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
     }
 
     .camera_control_bar {
         width: 100%;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 8px;
-        padding: 8px 10px;
-        box-sizing: border-box;
+        height: auto !important;
+        min-height: auto !important;
+        flex-wrap: wrap !important;
+        white-space: normal !important;
+        justify-content: center !important;
+        gap: 8px 10px !important;
+        padding: 8px 10px !important;
+        box-sizing: border-box !important;
     }
 
     .control_group {
-        gap: 4px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        flex-shrink: 0;
     }
 
     .control_label {
-        font-size: 9px;
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 0.5px;
     }
 
     .segmented_control {
         height: 30px;
         padding: 2px;
+        border-width: 2px;
     }
 
-    .seg_btn {
+    .segment_btn {
         font-size: 11px;
+        padding: 4px 8px;
+    }
+
+    .stamp_toggle_btn {
+        height: 30px;
         padding: 3px 8px;
+        font-size: 11px;
+        border-width: 2px;
     }
 
     .theme_swatches {
-        gap: 4px;
+        gap: 5px;
     }
 
-    .theme_dot {
-        width: 18px;
-        height: 18px;
+    .theme_swatch_btn {
+        width: 22px;
+        height: 22px;
+        border-width: 2px;
     }
 
-    /* Mobile Camera Viewfinder (Fluid 16:9) */
+    /* Strip color drawer on mobile */
+    .top_controls_row.strip_active .frame_color_bar,
+    .frame_color_bar.show {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        padding: 8px 10px;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+        animation: none;
+        transform: none;
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* Mobile Camera Viewfinder (Hero Element: Order 3) */
     .camera_wrapper {
+        order: 3;
         width: 100%;
         max-width: 100%;
         height: auto;
@@ -2163,10 +2228,13 @@ body[data-theme="midnight"] {
     .bracket_bl { bottom: 6px; left: 6px; }
     .bracket_br { bottom: 6px; right: 6px; }
 
-    /* Mobile Take Photo Button */
+    /* Mobile Take Photo Button (Directly under Camera: Order 4) */
     .takephoto_container {
+        order: 4;
         width: 100%;
         padding-top: 2px;
+        display: flex;
+        justify-content: center;
     }
 
     .takephoto_btn {
@@ -2177,9 +2245,16 @@ body[data-theme="midnight"] {
         box-shadow: 4px 4px 0 var(--black);
     }
 
-    /* Mobile Side Panels (Stacked) */
-    .history_panel,
+    /* Mobile Side Panels (Stacked below Take button: Order 5 & 6) */
     .filters_panel {
+        order: 5;
+        width: 100%;
+        height: 290px;
+        box-sizing: border-box;
+    }
+
+    .history_panel {
+        order: 6;
         width: 100%;
         height: 290px;
         box-sizing: border-box;
@@ -2235,28 +2310,6 @@ body[data-theme="midnight"] {
     .darkroom_light_palette .light_swatch {
         width: 16px;
         height: 16px;
-    }
-}
-
-/* ---------------------------------------------------------
-   5. ULTRA-COMPACT MOBILE (max-width: 430px)
-   Icon-only tool buttons so the title and tools fit cleanly
-   on small screens without crowding or wrapping.
---------------------------------------------------------- */
-@media (max-width: 430px) {
-    .tool_btn .btn_morph_text {
-        display: none;
-    }
-
-    .tool_btn {
-        width: 32px;
-        height: 32px;
-        padding: 0;
-        justify-content: center;
-    }
-
-    .header_right_cluster {
-        gap: 5px;
     }
 }
 
