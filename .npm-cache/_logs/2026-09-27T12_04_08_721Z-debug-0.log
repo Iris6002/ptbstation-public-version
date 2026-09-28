@@ -1,0 +1,36 @@
+0 verbose cli /usr/local/bin/node /usr/local/lib/node_modules/npm/bin/npm-cli.js
+1 info using npm@10.9.3
+2 info using node@v22.20.0
+3 silly config load:file:/usr/local/lib/node_modules/npm/npmrc
+4 silly config load:file:/Users/tanle/Desktop/ProJect/ptb/.npmrc
+5 silly config load:file:/Users/tanle/.npmrc
+6 silly config load:file:/usr/local/etc/npmrc
+7 verbose title npm exec modern-web-guidance@latest search animation reduced-motion
+8 verbose argv "exec" "--cache" "/Users/tanle/Desktop/ProJect/ptb/.npm-cache" "--yes" "--" "modern-web-guidance@latest" "search" "animation reduced-motion"
+9 verbose logfile logs-max:10 dir:/Users/tanle/Desktop/ProJect/ptb/.npm-cache/_logs/2026-09-27T12_04_08_721Z-
+10 verbose logfile /Users/tanle/Desktop/ProJect/ptb/.npm-cache/_logs/2026-09-27T12_04_08_721Z-debug-0.log
+11 silly logfile done cleaning log files
+12 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+13 verbose shrinkwrap failed to load node_modules/.package-lock.json out of date, updated: node_modules
+14 http fetch GET 200 https://registry.npmjs.org/modern-web-guidance 560ms (cache miss)
+15 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+16 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+17 silly idealTree buildDeps
+18 silly fetch manifest modern-web-guidance@0.0.190
+19 silly packumentCache full:https://registry.npmjs.org/modern-web-guidance cache-miss
+20 http fetch GET 200 https://registry.npmjs.org/modern-web-guidance 93ms (cache miss)
+21 silly packumentCache full:https://registry.npmjs.org/modern-web-guidance set size:undefined disposed:false
+22 silly placeDep ROOT modern-web-guidance@0.0.190 OK for:  want: 0.0.190
+23 silly reify moves {}
+24 silly audit bulk request { 'modern-web-guidance': [ '0.0.190' ] }
+25 http cache modern-web-guidance@https://registry.npmjs.org/modern-web-guidance/-/modern-web-guidance-0.0.190.tgz 1ms (cache hit)
+26 silly tarball no local data for modern-web-guidance@https://registry.npmjs.org/modern-web-guidance/-/modern-web-guidance-0.0.190.tgz. Extracting by manifest.
+27 http fetch POST 200 https://registry.npmjs.org/-/npm/v1/security/advisories/bulk 201ms
+28 silly audit report {}
+29 http fetch GET 200 https://registry.npmjs.org/modern-web-guidance/-/modern-web-guidance-0.0.190.tgz 13236ms (cache miss)
+30 verbose cwd /Users/tanle/Desktop/ProJect/ptb
+31 verbose os Darwin 25.6.0
+32 verbose node v22.20.0
+33 verbose npm  v10.9.3
+34 verbose exit 0
+35 info ok

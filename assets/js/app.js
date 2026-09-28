@@ -466,6 +466,11 @@ async function captureRawFrame() {
     ctx.drawImage(videoElement, 0, 0, tempCanvas.width, tempCanvas.height);
     ctx.restore();
 
+    // Composite any active darkroom neon light-painting directly onto the captured snapshot
+    if (window.PTBExperiences && window.PTBExperiences.hasLightPainting()) {
+        window.PTBExperiences.drawLightPainting(ctx, tempCanvas.width, tempCanvas.height);
+    }
+
     return tempCanvas;
 }
 
